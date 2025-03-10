@@ -739,7 +739,7 @@ components:
             required:
               - preflightActionExecutionId
               - experimentExecution
-    PreflightStatusRequestBody:
+    StatusPreflightRequestBody:
       title: Preflight Status Request
       description: The HTTP request payload passed to the preflight status endpoints.
       content:
