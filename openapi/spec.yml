@@ -1,0 +1,819 @@
+openapi: 3.1.0
+info:
+  title: Steadybit PreflightKit API
+  version: 1.0.0
+  license:
+    name: MIT
+    identifier: MIT
+consumes:
+  - application/json
+produces:
+  - application/json
+components:
+  schemas:
+    PreflightList:
+      title: Preflight List
+      description: Lists all preflights that the platform/agent could execute.
+      type: object
+      properties:
+        preflights:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescribingEndpointReference'
+          uniqueItems: true
+      required:
+        - preflights
+    PreflightKitError:
+      title: Error
+      description: >-
+        An enhanced version of RFC 7807 Problem Details for HTTP APIs compliant response body for error scenarios
+      properties:
+        status:
+          description: >-
+            * failed - The preflight has detected some failures, for example a failing test which has been implemented by the preflight. The preflight will be canceled, if this status is returned by the status endpoint.
+            * errored - There was a technical error while executing the preflight. Will be marked as red in the platform. The preflight will be canceled, if this status is returned by the status endpoint.
+          enum:
+            - failed
+            - errored
+          type: string
+          default: errored
+        type:
+          type: string
+          description: A URI reference that identifies the problem type.
+        title:
+          type: string
+          description: 'A short, human-readable summary of the problem type.'
+        detail:
+          type: string
+          description: >-
+            A human-readable explanation specific to this occurrence of the
+            problem.
+        instance:
+          type: string
+          description: >-
+            A URI reference that identifies the specific occurrence of the
+            problem.
+      required:
+        - title
+    PreflightDescription:
+      title: Preflight Description
+      description: >-
+        Provides details about a possible preflight, e.g., what configuration
+        options it has, how to present it to end-users and how to trigger the
+        preflight.
+      type: object
+      properties:
+        id:
+          type: string
+          description: >-
+            A technical ID that is used to uniquely identify this type of
+            preflight. You will typically want to use something like
+            `org.example.my-fancy-preflight`.
+        label:
+          type: string
+          description: A human-readable label for the preflight.
+        icon:
+          type: string
+          description: >-
+            An icon that is used to identify your preflight in the ui. Needs to be
+            a data-uri containing an image.
+          maxLength: 1000000
+          pattern: '^data:.*$'
+        version:
+          type: string
+          description: >-
+            The version of the preflight. Remember to increase the value everytime
+            you update the definitions. The platform will ignore any definition
+            changes with the same preflight version. We do recommend usage of
+            semver strings.
+        description:
+          type: string
+          description: >-
+            Description for end-users to help them understand what the preflight is
+            doing.
+        start:
+          $ref: '#/components/schemas/MutatingEndpointReference'
+        status:
+          $ref: '#/components/schemas/MutatingEndpointReferenceWithCallInterval'
+        cancel:
+          $ref: '#/components/schemas/MutatingEndpointReference'
+      required:
+        - id
+        - label
+        - version
+        - description
+        - start
+        - status
+    StartResult:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/PreflightKitError'
+    StatusResult:
+      properties:
+        completed:
+          description: the agent will continue to poll the status endpoint as long as completed is false and no error is set
+          type: boolean
+        error:
+          $ref: '#/components/schemas/PreflightKitError'
+      required:
+        - completed
+    CancelResult:
+      properties:
+        error:
+          $ref: '#/components/schemas/PreflightKitError'
+    ReadHttpMethod:
+      type: string
+      enum:
+        - GET
+    DescribingEndpointReference:
+      title: HTTP Endpoint Reference
+      description: HTTP endpoint which the Steadybit platform/agent could communicate with.
+      properties:
+        path:
+          description: Absolute path of the HTTP endpoint.
+          type: string
+          pattern: ^/.*$
+        method:
+          description: HTTP method to use when calling the HTTP endpoint.
+          $ref: '#/components/schemas/ReadHttpMethod'
+      required:
+        - path
+        - method
+    MutatingHttpMethod:
+      type: string
+      enum:
+        - POST
+        - PUT
+        - DELETE
+    MutatingEndpointReference:
+      title: HTTP Endpoint Reference
+      description: HTTP endpoint which the Steadybit platform/agent could communicate with.
+      properties:
+        path:
+          type: string
+          description: Absolute path of the HTTP endpoint.
+          pattern: ^/.*$
+        method:
+          description: HTTP method to use when calling the HTTP endpoint.
+          $ref: '#/components/schemas/MutatingHttpMethod'
+      required:
+        - path
+        - method
+    MutatingEndpointReferenceWithCallInterval:
+      title: HTTP Endpoint Reference
+      description: HTTP endpoint which the Steadybit platform/agent could communicate with.
+      allOf:
+        - $ref: '#/components/schemas/MutatingEndpointReference'
+        - type: object
+          properties:
+            callInterval:
+              type: string
+              pattern: ^\d+(ns|ms|s|m|h|d)$
+              description: >-
+                At what frequency should the state endpoint be called? Takes
+                durations in the format of `100ms` or `10s`.
+    ExperimentExecutionAO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique experiment execution id that identifies this specific
+            experiment execution
+          format: int32
+          example: 1523
+        key:
+          type: string
+          description: Unique experiment key that identifies the experiment. Combination
+            of `team key` and increasing number
+          example: ADM-2
+        name:
+          type: string
+          description: Name of the experiment to easily identify the experiment
+          example: Shop survives unavailability of hot-deals products
+        hypothesis:
+          type: string
+          description: The hypothesis that is validated by the experiment
+          example: System is able to survive a latency in the network of 1500ms
+        requested:
+          type: string
+          description: Timestamp when the experiment was requested
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        created:
+          type: string
+          description: Timestamp when the experiment was created
+          format: date-time
+          example: 2023-01-01T09:00:01Z
+        started:
+          type: string
+          description: Timestamp when the experiment was started
+          format: date-time
+          example: 2023-01-01T09:00:02Z
+        experimentVersion:
+          type: integer
+          description: Experiment design version which can be used to identify changes
+            between experiment runs
+          format: int32
+          example: 5
+        createdBy:
+          $ref: "#/components/schemas/UserSummaryAO"
+        createdVia:
+          type: string
+          description: The creation trigger that caused this experiment execution
+            to be started
+          example: UI
+          enum:
+            - API
+            - CLI
+            - UI
+            - SCHEDULE
+        steps:
+          type: array
+          description: The steps that are executed in parallel or sequence in the
+            experiment.
+          example:
+            - ignoreFailure: false
+              parameters:
+                duration: 10s
+            - predecessorId: 40b0f797-912d-4256-8887-1553561962a9
+              ignoreFailure: false
+              parameters:
+                cpuLoad: 100
+                workers: 0
+                duration: 30s
+              actionId: com.steadybit.extension_container.stress_cpu
+              actionKind: ATTACK
+              radius:
+                targetType: com.steadybit.extension_container.container
+                percentage: 50
+                predicate:
+                  operator: AND
+                  predicates:
+                    - key: container.host/name
+                      operator: EQUALS
+                      values:
+                        - docker-desktop/minikube
+              targetExecutions:
+                - type: container
+                  name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+                  attributes:
+                    - key: container.port
+                      value: 51152:2376
+                    - key: container.engine
+                      value: docker
+                    - key: container.host/name
+                      value: docker-desktop/minikube
+                    - key: container.host
+                      value: docker-desktop
+              totalTargetCount: 1
+          items:
+            $ref: "#/components/schemas/AbstractExperimentExecutionStepAO"
+        canceledBy:
+          $ref: "#/components/schemas/UserSummaryAO"
+        ended:
+          type: string
+          description: Timestamp when the experiment ended
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        state:
+          type: string
+          description: "Current state of the experiment (e.g. CREATED, RUNNING, FAILED,\
+            \ ERRORED, COMPLETED)"
+          example: RUNNING
+        reason:
+          type: string
+          description: Reason in case the experiment execution failed or errored
+          example: Action error
+        variables:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/ExperimentExecutionVariableAO"
+          description: Variables and their origins that have been used for this execution
+          example:
+            httpEndpoint:
+              value: http://dev.shop.products.internal
+              origin: ENVIRONMENT
+      description: A single experiment execution that was triggered from a single
+        experiment.
+      example:
+        id: 58070
+        key: SHOP-1
+        name: Shop should survive a single pod outage
+        hypothesis: When a single container from steadybit-demo/fashion-bestseller
+          fails the shop is still working as expected.
+        requested: 2023-01-01T09:00:00.000000Z
+        created: 2023-01-01T09:00:01.000000Z
+        createdBy:
+          username: ag1hb7ap-d299-47ab-998f-c2a53b433820
+          name: Manuel
+          pictureUrl: https://.../picture.png
+        createdVia: UI
+        experimentVersion: "5"
+        ended: 2023-01-01T09:10:00.000000Z
+        state: FAILED
+        reason: Check failure.
+    ExperimentExecutionStepActionAO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of this step execution
+          format: uuid
+          example: 40b0f797-912d-4256-8887-1553561962a9
+        predecessorId:
+          type: string
+          description: "Unique identifier of the step execution that precedes this\
+            \ step, null if it is the first step of a lane"
+          format: uuid
+          example: 40b0f797-912d-4256-8887-1553561962a9
+        state:
+          type: string
+          description: "Current state of this step in the experiment (e.g. RUNNING,\
+            \ FAILED, ERRORED, COMPLETED)"
+          example: RUNNING
+        started:
+          type: string
+          description: Timestamp when this experiment step was started
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        ended:
+          type: string
+          description: Timestamp when this experiment step ended
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        reason:
+          type: string
+          description: Reason in case this experiment step execution failed or errored
+          example: Couldn't read state of container...
+        ignoreFailure:
+          type: boolean
+          description: Whether the experiment should fail/error immediately in case
+            this step fails/errors.
+          example: false
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+            description: Step-specific parameters of the experiment step configuration
+            example:
+              duration: 10s
+          description: Step-specific parameters of the experiment step configuration
+          example:
+            duration: 10s
+        customLabel:
+          type: string
+          description: Custom label assigned during experiment design to express the
+            intention of this step
+          example: Container 'xyz' can not be reached
+        actionId:
+          type: string
+          description: Unique identifier of the action that is executed in this step
+          example: com.steadybit.extension_container.stress_cpu
+        actionKind:
+          type: string
+          description: "Kind of the action (e.g. attack, check, loadtest)"
+          example: ATTACK
+          enum:
+            - ATTACK
+            - CHECK
+            - LOAD_TEST
+            - OTHER
+            - BASIC
+        radius:
+          $ref: "#/components/schemas/BlastRadiusAO"
+        targetExecutions:
+          type: array
+          description: List of targets that are expected to be effected by this action.
+            This list may change in case targets aren't available at the specific
+            time of execution
+          example:
+            - type: container
+              name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+              attributes:
+                - key: container.port
+                  value: 51152:2376
+                - key: container.engine
+                  value: docker
+                - key: container.host/name
+                  value: docker-desktop/minikube
+                - key: container.host
+                  value: docker-desktop
+          items:
+            $ref: "#/components/schemas/TargetAO"
+        totalTargetCount:
+          type: integer
+          description: Amount of targets that are effect int total
+          format: int64
+          example: 23
+      description: An action-step that is executed as part of an experiment.
+      example:
+        predecessorId: 40b0f797-912d-4256-8887-1553561962a9
+        ignoreFailure: false
+        parameters:
+          cpuLoad: 100
+          workers: 0
+          duration: 30s
+        actionId: com.steadybit.extension_container.stress_cpu
+        actionKind: ATTACK
+        radius:
+          targetType: com.steadybit.extension_container.container
+          percentage: 50
+          predicate:
+            operator: AND
+            predicates:
+              - key: container.host/name
+                operator: EQUALS
+                values:
+                  - docker-desktop/minikube
+        targetExecutions:
+          - type: container
+            name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+            attributes:
+              - key: container.port
+                value: 51152:2376
+              - key: container.engine
+                value: docker
+              - key: container.host/name
+                value: docker-desktop/minikube
+              - key: container.host
+                value: docker-desktop
+        totalTargetCount: 1
+    ExperimentExecutionStepWaitAO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of this step execution
+          format: uuid
+          example: 40b0f797-912d-4256-8887-1553561962a9
+        predecessorId:
+          type: string
+          description: "Unique identifier of the step execution that precedes this\
+            \ step, null if it is the first step of a lane"
+          format: uuid
+          example: 40b0f797-912d-4256-8887-1553561962a9
+        state:
+          type: string
+          description: "Current state of this step in the experiment (e.g. RUNNING,\
+            \ FAILED, ERRORED, COMPLETED)"
+          example: RUNNING
+        started:
+          type: string
+          description: Timestamp when this experiment step was started
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        ended:
+          type: string
+          description: Timestamp when this experiment step ended
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        reason:
+          type: string
+          description: Reason in case this experiment step execution failed or errored
+          example: Couldn't read state of container...
+        ignoreFailure:
+          type: boolean
+          description: Whether the experiment should fail/error immediately in case
+            this step fails/errors.
+          example: false
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+            description: Step-specific parameters of the experiment step configuration
+            example:
+              duration: 10s
+          description: Step-specific parameters of the experiment step configuration
+          example:
+            duration: 10s
+        customLabel:
+          type: string
+          description: Custom label assigned during experiment design to express the
+            intention of this step
+          example: Container 'xyz' can not be reached
+      description: A wait step that is executed as part of an experiment.
+      example:
+        id: 40b0f797-912d-4256-8887-1553561962a9
+        predecessorId: null
+        ignoreFailure: false
+        parameters:
+          duration: 10s
+    ExperimentExecutionVariableAO:
+      type: object
+      properties:
+        value:
+          type: string
+        origin:
+          type: string
+          enum:
+            - ENVIRONMENT
+            - EXPERIMENT
+            - SCHEDULE
+            - EXECUTION
+      description: Variables and their origins that have been used for this execution
+      example:
+        httpEndpoint:
+          value: http://dev.shop.products.internal
+          origin: ENVIRONMENT
+    TargetAO:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the target that is expected to be effected
+          example: container
+        name:
+          type: string
+          description: Identifier of the target that is expected to be effected
+          example: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+        state:
+          type: string
+          description: State of this specific step on a per target-level.
+          example: COMPLETED
+        reason:
+          type: string
+          description: Reason on a per target-level why the experiment failed or errored.
+            If this step didn't failed or errored (`state != 'FAILED' and state !=
+            'ERRORED') the reason is `null`.
+          example: Failed to start Stop Container (com.steadybit.extension_container.stop)
+        reasonDetails:
+          type: string
+          description: Optional additional reason details on a per target-level why
+            the the experiment failed or errored.
+          example: "Could not read state of target container: exit status 1 (time=\"\
+            2023-09-29T12:41:32Z\" level=error msg=\"container does not exist\""
+        agentHostname:
+          type: string
+          description: The agent that processed this target-action command and forwarded
+            it to the proper extension instance.
+          example: prod-demo/steadybit-agent/steadybit-agent-0
+        source:
+          type: string
+          description: The source (i.e. call to the extension) that caused the step
+            to error or fail.
+          example: POST http://11.20.86.255:9093/com.steadybit.extension_container.container_stop/prepare
+        attributes:
+          uniqueItems: true
+          type: array
+          description: A set of attributes that have been discovered for this target.
+            A key may be associated multiple time to a single target.
+          example:
+            - key: container.port
+              value: 51152:2376
+            - key: container.engine
+              value: docker
+          items:
+            $ref: "#/components/schemas/AttributeAO"
+      description: A target that is expected to be effected by this action.
+      example:
+        type: container
+        name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+        state: COMPLETED
+        attributes:
+          - key: container.port
+            value: 51152:2376
+          - key: container.engine
+            value: docker
+          - key: container.host/name
+            value: docker-desktop/minikube
+          - key: container.host
+            value: docker-desktop
+    TargetPredicate:
+      type: object
+      description: Query defining the overall superset of targets being effected
+      example:
+        - key: container.host/name
+          operator: EQUALS
+          values:
+            - docker-desktop/minikube
+    AbstractExperimentExecutionStepAO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of this step execution
+          format: uuid
+          example: 40b0f797-912d-4256-8887-1553561962a9
+        predecessorId:
+          type: string
+          description: "Unique identifier of the step execution that precedes this\
+            \ step, null if it is the first step of a lane"
+          format: uuid
+          example: 40b0f797-912d-4256-8887-1553561962a9
+        state:
+          type: string
+          description: "Current state of this step in the experiment (e.g. RUNNING,\
+            \ FAILED, ERRORED, COMPLETED)"
+          example: RUNNING
+        started:
+          type: string
+          description: Timestamp when this experiment step was started
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        ended:
+          type: string
+          description: Timestamp when this experiment step ended
+          format: date-time
+          example: 2023-01-01T09:00:00Z
+        reason:
+          type: string
+          description: Reason in case this experiment step execution failed or errored
+          example: Couldn't read state of container...
+        ignoreFailure:
+          type: boolean
+          description: Whether the experiment should fail/error immediately in case
+            this step fails/errors.
+          example: false
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+            description: Step-specific parameters of the experiment step configuration
+            example:
+              duration: 10s
+          description: Step-specific parameters of the experiment step configuration
+          example:
+            duration: 10s
+        customLabel:
+          type: string
+          description: Custom label assigned during experiment design to express the
+            intention of this step
+          example: Container 'xyz' can not be reached
+      description: A step that is executed as part of an experiment.
+      example:
+        - id: 40b0f797-912d-4256-8887-1553561962a9
+          predecessorId: null
+          ignoreFailure: false
+          parameters:
+            duration: 10s
+      oneOf:
+        - $ref: "#/components/schemas/ExperimentExecutionStepActionAO"
+        - $ref: "#/components/schemas/ExperimentExecutionStepWaitAO"
+    BlastRadiusAO:
+      type: object
+      properties:
+        targetType:
+          type: string
+          description: Target type that is effected by that action
+          example: container
+        percentage:
+          type: integer
+          description: In case a percentage subset of the specified targets should
+            be effected
+          format: int32
+          example: 40
+        maximum:
+          type: integer
+          description: In case a fixed number of as subset of specified targets should
+            be effected
+          format: int32
+          example: 2
+        predicate:
+          $ref: "#/components/schemas/TargetPredicate"
+      description: Blast radius that is applied to define the set of targets as well
+        as an optional random subset
+      example:
+        targetType: com.steadybit.extension_container.container
+        percentage: 50
+        predicate:
+          operator: AND
+          predicates:
+            - key: container.host/name
+              operator: EQUALS
+              values:
+                - docker-desktop/minikube
+    AttributeAO:
+      required:
+        - key
+        - value
+      type: object
+      properties:
+        key:
+          type: string
+          description: "The key of the attribute, may be associated multiple times\
+            \ to the same target"
+          example: container.engine
+        value:
+          type: string
+          description: The value of the attribute
+          example: docker
+      description: An attributes (key-value-pair) that is associated to a target
+      example:
+        key: container.port
+        value: 51152:2376
+    UserSummaryAO:
+      type: object
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+        pictureUrl:
+          type: string
+        email:
+          type: string
+      description: The user that connected the hub
+      example:
+        username: ag1hb7ap-d299-47ab-998f-c2a53b433820
+        name: Manuel
+        email: aa@bb.com
+        pictureUrl: https://.../picture.png
+  requestBodies:
+    StartPreflightRequestBody:
+      title: Start Preflight Request
+      description: The HTTP request payload passed to the start preflight endpoints.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              preflightActionExecutionId:
+                type: string
+                format: string
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/google/uuid
+              experimentExecution:
+                $ref: '#/components/schemas/ExperimentExecutionAO'
+            required:
+              - preflightActionExecutionId
+              - experimentExecution
+    PreflightStatusRequestBody:
+      title: Preflight Status Request
+      description: The HTTP request payload passed to the preflight status endpoints.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              preflightActionExecutionId:
+                type: string
+                format: string
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/google/uuid
+            required:
+              - preflightActionExecutionId
+    CancelPreflightRequestBody:
+      title: Stop Preflight Request
+      description: The HTTP request payload passed to the stop/cancel preflight endpoints.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              preflightActionExecutionId:
+                type: string
+                format: string
+                x-go-type: uuid.UUID
+                x-go-type-import:
+                  path: github.com/google/uuid
+            required:
+              - preflightActionExecutionId
+  responses:
+    PreflightListResponse:
+      title: Preflight List Response
+      description: Response for the preflight list endpoint
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/PreflightList'
+              - $ref: '#/components/schemas/PreflightKitError'
+    DescribePreflightResponse:
+      title: Describe Preflight Response
+      description: Response for the describe preflight endpoint
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/PreflightDescription'
+              - $ref: '#/components/schemas/PreflightKitError'
+    StartPreflightResponse:
+      title: Start Preflight Response
+      description: Response for the start preflight endpoint
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/StartResult'
+              - $ref: '#/components/schemas/PreflightKitError'
+    PreflightStatusResponse:
+      title: Preflight Status Response
+      description: Response for the start preflight endpoint
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/StatusResult'
+              - $ref: '#/components/schemas/PreflightKitError'
+    CancelPreflightResponse:
+      title: Stop Preflight Response
+      description: Response for the stop preflight endpoint
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: '#/components/schemas/CancelResult'
+              - $ref: '#/components/schemas/PreflightKitError'

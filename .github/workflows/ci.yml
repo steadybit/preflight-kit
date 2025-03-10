@@ -1,0 +1,85 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'main'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  go-preflight-kit-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./go/preflight_kit_api
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # increased fetch depth to support git diff
+        fetch-depth: 2
+    - uses: actions/setup-go@v5
+      with:
+        cache-dependency-path: ./go/preflight_kit_api
+        go-version: '1.23'
+    - run: ./build.sh
+    - run: git diff --exit-code
+      name: "Ensure that Go API changes (as a consequence of OpenAPI spec changes) are checked in"
+    - run: go get
+    - run: go test
+
+  go-preflight-kit-sdk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./go/preflight_kit_sdk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          cache-dependency-path: ./go/preflight_kit_sdk
+          go-version: '1.23'
+      - name: Audit
+        run: |
+          go mod download
+          make audit
+
+  go-preflight-kit-commons:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./go/preflight_kit_commons
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          cache-dependency-path: ./go/preflight_kit_commons
+          go-version: '1.23'
+      - name: Audit
+        # Execute go tests with sudo to be able to start lsns.
+        run: |
+          go mod download
+          sudo make audit
+
+  go-preflight-kit-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./go/preflight_kit_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          cache-dependency-path: ./go/preflight_kit_test
+          go-version: '1.23'
+      - name: Audit
+        run: |
+          go mod download
+          make audit

@@ -1,0 +1,4 @@
+node_modules/
+*.iml
+/preflight_kit_api.go
+**/coverage.out
