@@ -301,10 +301,10 @@ func TestPreflightKitObjects(t *testing.T) {
 		markAsUsed(t, cprb)
 	})
 
-	// PreflightStatusRequestBody
-	t.Run("PreflightStatusRequestBody", func(t *testing.T) {
+	// StatusPreflightRequestBody
+	t.Run("StatusPreflightRequestBody", func(t *testing.T) {
 		id := uuid.New()
-		psrb := PreflightStatusRequestBody{
+		psrb := StatusPreflightRequestBody{
 			PreflightActionExecutionId: id,
 		}
 		markAsUsed(t, psrb)

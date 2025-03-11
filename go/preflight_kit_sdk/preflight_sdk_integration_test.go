@@ -182,7 +182,7 @@ func (op *PreflightOperations) start(t *testing.T) preflight_kit_api.StartResult
 }
 
 func (op *PreflightOperations) status(t *testing.T) (*preflight_kit_api.StatusResult, *preflight_kit_api.PreflightKitError) {
-	statusBody := preflight_kit_api.PreflightStatusRequestBody{PreflightActionExecutionId: op.executionId}
+	statusBody := preflight_kit_api.StatusPreflightRequestBody{PreflightActionExecutionId: op.executionId}
 	jsonBody, err := json.Marshal(statusBody)
 	require.NoError(t, err)
 	bodyReader := bytes.NewReader(jsonBody)
@@ -203,7 +203,7 @@ func (op *PreflightOperations) status(t *testing.T) (*preflight_kit_api.StatusRe
 }
 
 func (op *PreflightOperations) cancel(t *testing.T) {
-	statusBody := preflight_kit_api.PreflightStatusRequestBody{PreflightActionExecutionId: op.executionId}
+	statusBody := preflight_kit_api.StatusPreflightRequestBody{PreflightActionExecutionId: op.executionId}
 	jsonBody, err := json.Marshal(statusBody)
 	require.NoError(t, err)
 	bodyReader := bytes.NewReader(jsonBody)
