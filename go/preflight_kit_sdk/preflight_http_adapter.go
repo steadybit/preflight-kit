@@ -5,12 +5,14 @@ package preflight_kit_sdk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/rs/zerolog/log"
 	extension_kit "github.com/steadybit/extension-kit"
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/extension-kit/extutil"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/state_persister"
 	"net/http"
 	"os"
 	"time"
@@ -63,7 +65,11 @@ func (a *preflightHttpAdapter) handleStart(w http.ResponseWriter, r *http.Reques
 	}
 
 	if a.description.Cancel != nil {
-
+		err = statePersister.PersistState(r.Context(), &state_persister.PersistedState{PreflightActionExecutionId: parsedBody.PreflightActionExecutionId, PreflightActionId: a.description.Id})
+		if err != nil {
+			exthttp.WriteError(w, extension_kit.ToError("Failed to persist preflightAction state.", err))
+			return
+		}
 		if a.description.Status.CallInterval != nil {
 			interval, err := time.ParseDuration(*a.description.Status.CallInterval)
 			if interval < minHeartbeatInterval {
@@ -73,6 +79,7 @@ func (a *preflightHttpAdapter) handleStart(w http.ResponseWriter, r *http.Reques
 				monitorHeartbeat(parsedBody.PreflightActionExecutionId, interval, interval*4)
 			}
 		}
+
 	}
 	exthttp.WriteBody(w, result)
 }
@@ -100,17 +107,17 @@ func (a *preflightHttpAdapter) handleStatus(w http.ResponseWriter, r *http.Reque
 
 	preflight := a.preflight
 	result, err := preflight.Status(r.Context(), parsedBody)
-	if result == nil {
-		result = &preflight_kit_api.StatusResult{}
-	}
 	if err != nil {
-		extensionError, isExtensionError := err.(extension_kit.ExtensionError)
-		if isExtensionError {
-			exthttp.WriteError(w, extensionError)
+		var extErr *extension_kit.ExtensionError
+		if errors.As(err, &extErr) {
+			exthttp.WriteError(w, *extErr)
 		} else {
 			exthttp.WriteError(w, extension_kit.ToError("Failed to read status.", err))
 		}
 		return
+	}
+	if result == nil {
+		result = &preflight_kit_api.StatusResult{}
 	}
 	exthttp.WriteBody(w, result)
 }
@@ -166,6 +173,15 @@ func (a *preflightHttpAdapter) handleCancel(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
+	err = statePersister.DeleteState(r.Context(), parsedBody.PreflightActionExecutionId)
+	if err != nil {
+		log.Warn().
+			Err(err).
+			Str("preflightActionId", a.description.Id).
+			Str("preflightActionExecutionId", parsedBody.PreflightActionExecutionId.String()).
+			Msg("Failed to delete action state.")
+		return
+	}
 	exthttp.WriteBody(w, result)
 }
 

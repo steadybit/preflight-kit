@@ -46,6 +46,9 @@ func (preflight *ExamplePreflight) Start(_ context.Context, request preflight_ki
 
 func (preflight *ExamplePreflight) Status(_ context.Context, request preflight_kit_api.PreflightStatusRequestBody) (*preflight_kit_api.StatusResult, error) {
 	preflight.calls <- Call{"Status", []interface{}{request}}
+	if preflight.statusError != nil {
+		return nil, preflight.statusError
+	}
 	return &preflight_kit_api.StatusResult{}, nil
 }
 

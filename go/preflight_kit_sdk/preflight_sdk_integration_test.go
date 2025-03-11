@@ -6,12 +6,15 @@ package preflight_kit_sdk
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/phayes/freeport"
+	extension_kit "github.com/steadybit/extension-kit"
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/extension-kit/extlogging"
 	"github.com/steadybit/extension-kit/extsignals"
+	"github.com/steadybit/extension-kit/extutil"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -44,18 +47,18 @@ func Test_SDK(t *testing.T) {
 			Name: "should run a simple preflight",
 			Fn:   testcaseSimple,
 		},
-		//{
-		//	Name: "should cancel preflights on heartbeat timeout",
-		//	Fn:   testcaseHeartbeatTimeout,
-		//},
-		//{
-		//	Name: "should return error from status",
-		//	Fn:   testCaseStatusWithGenericError,
-		//},
-		//{
-		//	Name: "should return extension error from status",
-		//	Fn:   testCaseStatusWithExtensionKitError,
-		//},
+		{
+			Name: "should cancel preflights on heartbeat timeout",
+			Fn:   testcaseHeartbeatTimeout,
+		},
+		{
+			Name: "should return error from status",
+			Fn:   testCaseStatusWithGenericError,
+		},
+		{
+			Name: "should return extension error from status",
+			Fn:   testCaseStatusWithExtensionKitError,
+		},
 	}
 	calls := make(chan Call, 1024)
 	defer close(calls)
@@ -99,42 +102,40 @@ func testcaseSimple(t *testing.T, op PreflightOperations) {
 	op.start(t)
 	op.assertCall(t, "Start", ANY_ARG)
 
-	_ = op.status(t)
+	_, _ = op.status(t)
 	op.assertCall(t, "Status", ANY_ARG)
 
 	op.cancel(t)
 	op.assertCall(t, "Cancel", ANY_ARG)
 }
 
-//func testcaseHeartbeatTimeout(t *testing.T, op PreflightOperations) {
-//	result, _ := op.prepare(t)
-//	state := result.State
-//
-//	state = op.start(t, state)
-//	op.resetCalls()
-//
-//	time.Sleep(25 * time.Second)
-//	op.assertCall(t, "Stop", toExampleState(state))
-//
-//	statusResult := op.statusResult(t, state)
-//	require.NotNil(t, statusResult.Error)
-//	assert.Equal(t, preflight_kit_api.Errored, *statusResult.Error.Status)
-//	assert.Equal(t, "Preflight was stopped by extension: heartbeat timeout", statusResult.Error.Title)
-//}
+func testcaseHeartbeatTimeout(t *testing.T, op PreflightOperations) {
+	op.start(t)
+	op.resetCalls()
 
-//func testCaseStatusWithGenericError(t *testing.T, op PreflightOperations) {
-//	op.preflight.statusError = fmt.Errorf("this is a test error")
-//	_, response := op.status(t)
-//	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "Failed to prepare.", Detail: extutil.Ptr("this is a test error")}, response)
-//	op.assertCall(t, "Prepare", ANY_ARG, ANY_ARG)
-//}
-//
-//func testCaseStatusWithExtensionKitError(t *testing.T, op PreflightOperations) {
-//	op.preflight.statusError = extutil.Ptr(extension_kit.ToError("this is a test error", errors.New("with some setails")))
-//	_, response := op.start(t)
-//	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "this is a test error", Detail: extutil.Ptr("with some setails")}, response)
-//	op.assertCall(t, "Prepare", ANY_ARG, ANY_ARG)
-//}
+	time.Sleep(25 * time.Second)
+	op.assertCall(t, "Cancel", ANY_ARG)
+
+	statusResult, err := op.status(t)
+	require.Nil(t, err)
+	require.NotNil(t, statusResult.Error)
+	assert.Equal(t, preflight_kit_api.Errored, *statusResult.Error.Status)
+	assert.Equal(t, "Preflight was stopped by extension: heartbeat timeout", statusResult.Error.Title)
+}
+
+func testCaseStatusWithGenericError(t *testing.T, op PreflightOperations) {
+	op.preflight.statusError = fmt.Errorf("this is a test error")
+	_, err := op.status(t)
+	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "Failed to read status.", Detail: extutil.Ptr("this is a test error")}, err)
+	op.assertCall(t, "Status", ANY_ARG)
+}
+
+func testCaseStatusWithExtensionKitError(t *testing.T, op PreflightOperations) {
+	op.preflight.statusError = extutil.Ptr(extension_kit.ToError("this is a test error", errors.New("with some setails")))
+	_, response := op.status(t)
+	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "this is a test error", Detail: extutil.Ptr("with some setails")}, response)
+	op.assertCall(t, "Status", ANY_ARG)
+}
 
 func listExtension(t *testing.T, path string) string {
 	res, err := http.Get(path)
@@ -180,24 +181,25 @@ func (op *PreflightOperations) start(t *testing.T) preflight_kit_api.StartResult
 	return response
 }
 
-func (op *PreflightOperations) status(t *testing.T) preflight_kit_api.StatusResult {
-	response := op.statusResult(t)
-	return response
-}
-
-func (op *PreflightOperations) statusResult(t *testing.T) preflight_kit_api.StatusResult {
+func (op *PreflightOperations) status(t *testing.T) (*preflight_kit_api.StatusResult, *preflight_kit_api.PreflightKitError) {
 	statusBody := preflight_kit_api.PreflightStatusRequestBody{PreflightActionExecutionId: op.executionId}
 	jsonBody, err := json.Marshal(statusBody)
 	require.NoError(t, err)
 	bodyReader := bytes.NewReader(jsonBody)
 	res, err := http.Post(fmt.Sprintf("%s%s", op.basePath, op.description.Status.Path), "application/json", bodyReader)
+	if res.StatusCode != http.StatusOK {
+		var response preflight_kit_api.PreflightKitError
+		err = json.NewDecoder(res.Body).Decode(&response)
+		require.NoError(t, err)
+		return nil, &response
+	}
 	require.NoError(t, err)
 	body, err := io.ReadAll(res.Body)
 	require.NoError(t, err)
 	var response preflight_kit_api.StatusResult
 	err = json.Unmarshal(body, &response)
 	require.NoError(t, err)
-	return response
+	return &response, nil
 }
 
 func (op *PreflightOperations) cancel(t *testing.T) {

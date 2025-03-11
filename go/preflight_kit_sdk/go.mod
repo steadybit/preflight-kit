@@ -8,7 +8,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/rs/zerolog v1.33.0
-	github.com/steadybit/action-kit/go/action_kit_sdk v1.1.15
 	github.com/steadybit/extension-kit v1.9.0
 	github.com/steadybit/preflight-kit/go/preflight_kit_api v0.0.0-20250310103102-f80091501e59
 	github.com/stretchr/testify v1.10.0

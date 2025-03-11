@@ -8,9 +8,10 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/steadybit/action-kit/go/action_kit_sdk/heartbeat"
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/heartbeat"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/state_persister"
 	"net/http"
 	"reflect"
 	"runtime/coverage"
@@ -20,7 +21,7 @@ import (
 
 var (
 	registeredPreflights = make(map[string]interface{})
-	runningPreflights    = make(map[uuid.UUID]*preflight_kit_api.PreflightDescription)
+	statePersister       = state_persister.NewInmemoryStatePersister()
 	stopEvents           = make([]stopEvent, 0, 10)
 	heartbeatMonitors    = sync.Map{}
 )
@@ -48,17 +49,9 @@ type PreflightWithCancel interface {
 	Cancel(ctx context.Context, request preflight_kit_api.CancelPreflightRequestBody) (*preflight_kit_api.CancelResult, error)
 }
 
-func GetPreflightActionExecutionIds() ([]uuid.UUID, error) {
-	var ids []uuid.UUID
-	for id := range runningPreflights {
-		ids = append(ids, id)
-	}
-	return ids, nil
-}
-
 func CancelAllActivePreflights(reason string) {
 	ctx := context.Background()
-	preflightActionExecutionIds, err := GetPreflightActionExecutionIds()
+	preflightActionExecutionIds, err := statePersister.GetExecutionIds(ctx)
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed to load active preflights")
 	}
@@ -70,15 +63,8 @@ func CancelAllActivePreflights(reason string) {
 	}
 }
 
-func GetRunningPreflight(preflightActionExecutionId uuid.UUID) (*preflight_kit_api.PreflightDescription, error) {
-	if preflight, ok := runningPreflights[preflightActionExecutionId]; ok {
-		return preflight, nil
-	}
-	return nil, fmt.Errorf("preflight with id %s not found", preflightActionExecutionId.String())
-}
-
 func CancelPreflight(ctx context.Context, preflightActionExecutionId uuid.UUID, reason string) {
-	preflightDescription, err := GetRunningPreflight(preflightActionExecutionId)
+	persistedState, err := statePersister.GetState(ctx, preflightActionExecutionId)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -88,36 +74,45 @@ func CancelPreflight(ctx context.Context, preflightActionExecutionId uuid.UUID, 
 		return
 	}
 
-	preflight, ok := registeredPreflights[preflightDescription.Id]
+	action, ok := registeredPreflights[persistedState.PreflightActionId]
 	if !ok {
 		log.Error().
-			Str("preflightId", preflightDescription.Id).
-			Str("preflightActionExecutionId", preflightActionExecutionId.String()).
+			Str("preflightActionId", persistedState.PreflightActionId).
+			Str("preflightActionExecutionId", persistedState.PreflightActionExecutionId.String()).
 			Str("reason", reason).
 			Msgf("preflight is not registered, cannot cancel active preflight")
 		return
 	}
 
-	preflightType := reflect.ValueOf(preflight)
+	preflightType := reflect.ValueOf(action)
 	if cancelMethod := preflightType.MethodByName("Cancel"); !cancelMethod.IsNil() {
 		log.Info().
-			Str("preflightId", preflightDescription.Id).
+			Str("preflightActionId", persistedState.PreflightActionId).
 			Str("preflightActionExecutionId", preflightActionExecutionId.String()).
 			Str("reason", reason).
 			Msg("cancelling active preflight")
 
 		markAsStopped(preflightActionExecutionId, reason)
 
-		if err := cancelMethod.Call([]reflect.Value{reflect.ValueOf(ctx)})[1].Interface(); err != nil {
+		if err := cancelMethod.Call([]reflect.Value{reflect.ValueOf(ctx), reflect.ValueOf(preflight_kit_api.CancelPreflightRequestBody{PreflightActionExecutionId: preflightActionExecutionId})})[1].Interface(); err != nil {
 			log.Warn().
-				Str("preflightId", preflightDescription.Id).
+				Str("preflightActionId", persistedState.PreflightActionId).
 				Str("preflightActionExecutionId", preflightActionExecutionId.String()).
 				Str("reason", reason).
 				Err(err.(error)).
 				Msg("failed cancelling active preflight")
 			return
 		}
-		delete (runningPreflights, preflightActionExecutionId)
+
+		stopMonitorHeartbeat(persistedState.PreflightActionExecutionId)
+		if err := statePersister.DeleteState(ctx, persistedState.PreflightActionExecutionId); err != nil {
+			log.Debug().
+				Str("preflightActionId", persistedState.PreflightActionId).
+				Str("preflightActionExecutionId", persistedState.PreflightActionExecutionId.String()).
+				Str("reason", reason).
+				Err(err).
+				Msg("failed deleting persisted state")
+		}
 	}
 }
 
