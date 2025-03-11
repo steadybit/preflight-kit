@@ -9,7 +9,7 @@ require (
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/rs/zerolog v1.33.0
 	github.com/steadybit/extension-kit v1.9.0
-	github.com/steadybit/preflight-kit/go/preflight_kit_api v0.0.0-20250310103102-f80091501e59
+	github.com/steadybit/preflight-kit/go/preflight_kit_api v0.0.0-20250311092309-5ce5fc7ee240
 	github.com/stretchr/testify v1.10.0
 )
 

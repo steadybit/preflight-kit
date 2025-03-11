@@ -40,7 +40,7 @@ type Preflight interface {
 	Start(ctx context.Context, request preflight_kit_api.StartPreflightRequestBody) (*preflight_kit_api.StartResult, error)
 	// Status is used to observe the current status of the preflight. This is called periodically by the preflight-kit if time control [preflight_kit_api.TimeControlInternal] or [preflight_kit_api.TimeControlExternal] is used.
 	// [Details](https://github.com/steadybit/preflight-kit/blob/main/docs/preflight-api.md#status)
-	Status(ctx context.Context, request preflight_kit_api.PreflightStatusRequestBody) (*preflight_kit_api.StatusResult, error)
+	Status(ctx context.Context, request preflight_kit_api.StatusPreflightRequestBody) (*preflight_kit_api.StatusResult, error)
 }
 type PreflightWithCancel interface {
 	Preflight
