@@ -18,10 +18,6 @@ type ExamplePreflight struct {
 	calls       chan<- Call
 	statusError error
 }
-type ExampleConfig struct {
-	Duration  string
-	InputFile string
-}
 
 func NewExamplePreflight(calls chan<- Call) *ExamplePreflight {
 	return &ExamplePreflight{calls: calls}
@@ -44,7 +40,7 @@ func (preflight *ExamplePreflight) Start(_ context.Context, request preflight_ki
 	return &preflight_kit_api.StartResult{}, nil
 }
 
-func (preflight *ExamplePreflight) Status(_ context.Context, request preflight_kit_api.PreflightStatusRequestBody) (*preflight_kit_api.StatusResult, error) {
+func (preflight *ExamplePreflight) Status(_ context.Context, request preflight_kit_api.StatusPreflightRequestBody) (*preflight_kit_api.StatusResult, error) {
 	preflight.calls <- Call{"Status", []interface{}{request}}
 	if preflight.statusError != nil {
 		return nil, preflight.statusError
