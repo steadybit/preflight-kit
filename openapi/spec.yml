@@ -602,6 +602,10 @@ components:
           description: Unique identifier of this step execution
           format: uuid
           example: 40b0f797-912d-4256-8887-1553561962a9
+        stepType:
+          type: string
+          description: Type of the step (e.g. ACTION, WAIT)
+          example: ACTION
         predecessorId:
           type: string
           description: "Unique identifier of the step execution that precedes this\
@@ -654,6 +658,12 @@ components:
           ignoreFailure: false
           parameters:
             duration: 10s
+      discriminator:
+        propertyName: stepType
+        mapping:
+          ACTION: "#/components/schemas/ExperimentExecutionStepActionAO"
+          WAIT: "#/components/schemas/ExperimentExecutionStepWaitAO"
+        oneOf:
       oneOf:
         - $ref: "#/components/schemas/ExperimentExecutionStepActionAO"
         - $ref: "#/components/schemas/ExperimentExecutionStepWaitAO"
