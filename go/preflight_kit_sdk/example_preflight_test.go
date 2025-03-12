@@ -28,6 +28,7 @@ func (preflight *ExamplePreflight) Describe() preflight_kit_api.PreflightDescrip
 		Id:          "ExamplePreflightId",
 		Description: "This is an Example Preflight",
 		Start:       preflight_kit_api.MutatingEndpointReference{},
+		TargetAttributeIncludes: []string{"target.attribute.to.include", "target.attribute.to.include.2"},
 		Status: preflight_kit_api.MutatingEndpointReferenceWithCallInterval{
 			CallInterval: extutil.Ptr("1s"),
 		},
