@@ -44,10 +44,8 @@ func (a *preflightHttpAdapter) handleGetDescription(w http.ResponseWriter, _ *ht
 }
 
 func (a *preflightHttpAdapter) handleStart(w http.ResponseWriter, r *http.Request, body []byte) {
-	var parsedBody preflight_kit_api.StartPreflightRequestBody
-	err := json.Unmarshal(body, &parsedBody)
-	if err != nil {
-		exthttp.WriteError(w, extension_kit.ToError("Failed to parse request body.", err))
+	parsedBody, err, done := parseStartRequest(w, body)
+	if done {
 		return
 	}
 
@@ -82,6 +80,16 @@ func (a *preflightHttpAdapter) handleStart(w http.ResponseWriter, r *http.Reques
 
 	}
 	exthttp.WriteBody(w, result)
+}
+
+func parseStartRequest(w http.ResponseWriter, body []byte) (preflight_kit_api.StartPreflightRequestBody, error, bool) {
+	var parsedBody preflight_kit_api.StartPreflightRequestBody
+	err := json.Unmarshal(body, &parsedBody)
+	if err != nil {
+		exthttp.WriteError(w, extension_kit.ToError("Failed to parse request body.", err))
+		return preflight_kit_api.StartPreflightRequestBody{}, nil, true
+	}
+	return parsedBody, err, false
 }
 
 func (a *preflightHttpAdapter) handleStatus(w http.ResponseWriter, r *http.Request, body []byte) {

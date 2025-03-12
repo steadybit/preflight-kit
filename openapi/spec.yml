@@ -650,11 +650,12 @@ components:
           example: false
         parameters:
           type: object
-          additionalProperties:
-            type: object
-            description: Step-specific parameters of the experiment step configuration
-            example:
-              duration: 10s
+          additionalProperties: true
+#          additionalProperties:
+#            type: object
+#            description: Step-specific parameters of the experiment step configuration
+#            example:
+#              duration: 10s
           description: Step-specific parameters of the experiment step configuration
           example:
             duration: 10s
