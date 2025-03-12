@@ -322,12 +322,17 @@ components:
         reason: Check failure.
     ExperimentExecutionStepActionAO:
       type: object
+      required:
+        - stepType
       properties:
         id:
           type: string
           description: Unique identifier of this step execution
           format: uuid
           example: 40b0f797-912d-4256-8887-1553561962a9
+        stepType:
+          type: string
+          enum: [ ACTION ]
         predecessorId:
           type: string
           description: "Unique identifier of the step execution that precedes this\
@@ -448,12 +453,17 @@ components:
         totalTargetCount: 1
     ExperimentExecutionStepWaitAO:
       type: object
+      required:
+        - stepType
       properties:
         id:
           type: string
           description: Unique identifier of this step execution
           format: uuid
           example: 40b0f797-912d-4256-8887-1553561962a9
+        stepType:
+          type: string
+          enum: [ WAIT ]
         predecessorId:
           type: string
           description: "Unique identifier of the step execution that precedes this\
@@ -596,6 +606,8 @@ components:
             - docker-desktop/minikube
     AbstractExperimentExecutionStepAO:
       type: object
+      required:
+        - stepType
       properties:
         id:
           type: string
