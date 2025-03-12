@@ -91,6 +91,12 @@ components:
           description: >-
             Description for end-users to help them understand what the preflight is
             doing.
+        targetAttributeIncludes:
+          type: array
+          description: >-
+              A list of attributes of targets that are populated to the preflight in the experiment execution. If the list is empty, no attributes are populated.
+          items:
+            type: string
         start:
           $ref: '#/components/schemas/MutatingEndpointReference'
         status:
@@ -102,6 +108,7 @@ components:
         - label
         - version
         - description
+        - targetAttributeIncludes
         - start
         - status
     StartResult:
