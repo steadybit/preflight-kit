@@ -115,6 +115,9 @@ func (a *preflightHttpAdapter) handleStatus(w http.ResponseWriter, r *http.Reque
 
 	preflight := a.preflight
 	result, err := preflight.Status(r.Context(), parsedBody)
+	if result == nil {
+		result = &preflight_kit_api.StatusResult{}
+	}
 	if err != nil {
 		var extErr *extension_kit.ExtensionError
 		if errors.As(err, &extErr) {
@@ -123,9 +126,6 @@ func (a *preflightHttpAdapter) handleStatus(w http.ResponseWriter, r *http.Reque
 			exthttp.WriteError(w, extension_kit.ToError("Failed to read status.", err))
 		}
 		return
-	}
-	if result == nil {
-		result = &preflight_kit_api.StatusResult{}
 	}
 	exthttp.WriteBody(w, result)
 }
