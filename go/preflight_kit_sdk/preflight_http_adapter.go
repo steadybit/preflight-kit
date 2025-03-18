@@ -48,6 +48,10 @@ func (a *preflightHttpAdapter) handleStart(w http.ResponseWriter, r *http.Reques
 	if done {
 		return
 	}
+	if err != nil {
+		exthttp.WriteError(w, extension_kit.ToError("Failed to parse request body.", err))
+		return
+	}
 
 	result, err := a.preflight.Start(r.Context(), parsedBody)
 	if result == nil {
