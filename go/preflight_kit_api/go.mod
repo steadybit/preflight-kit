@@ -1,8 +1,8 @@
 module github.com/steadybit/preflight-kit/go/preflight_kit_api
 
-go 1.23
+go 1.24
 
-toolchain go1.23.4
+toolchain go1.24.1
 
 require (
 	github.com/getkin/kin-openapi v0.129.0
