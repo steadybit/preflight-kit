@@ -8,4 +8,12 @@ The Steadybit PreflightKit enables the extension of Steadybit with new preflight
 
 ## Getting Started
 
-t.b.d.
+We recommend that you read the following documentation to get started with ActionKit.
+
+- [Preflight API](/docs/preflight-api.md)
+- [How-To Write A Preflight Check](/docs/how-to/write-a-preflight-check)
+- [Action Registration](/docs/preflight-registration.md)
+- [Terminology](/docs/terminology.md)
+- [Examples](/docs/examples.md)
+- [FAQ](/docs/faq.md)
+- [Extension-Scaffold](https://github.com/steadybit/extension-scaffold/blob/main/README.md)
