@@ -28,7 +28,7 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         cache-dependency-path: ./go/preflight_kit_api
-        go_version: '^1.24.1'
+        go-version: '^1.24.1'
     - run: ./build.sh
     - run: git diff --exit-code
       name: "Ensure that Go API changes (as a consequence of OpenAPI spec changes) are checked in"
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           cache-dependency-path: ./go/preflight_kit_sdk
-          go_version: '^1.24.1'
+          go-version: '^1.24.1'
       - name: Audit
         run: |
           go mod download
