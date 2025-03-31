@@ -62,7 +62,7 @@ See our [example](examples.md) for a preflight implementation.
 
 ## Step 2: Register with Steadybit Agents
 
-To register your extension with Steadybit agents, you need to tell the agents where to find it. Follow the [Extension Discovery](../preflight-registration.md) documentation to register your extension.
+To register your extension with Steadybit agents, you need to tell the agents where to find it. Follow the [Extension Registration](../preflight-registration.md) documentation to register your extension.
 
 ## Step 3: Use the Preflight Check in Experiments
 
