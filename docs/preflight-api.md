@@ -197,7 +197,7 @@ The cancel phase allows for cleanup of any resources associated with a preflight
 
 The preflight endpoints follow the same mechanisms for error handling as other Steadybit extension APIs.
 
-The agent will stop the experiment execution if the extension:
+The agent prevents the experiment execution if the extension:
 
 - Returns a HTTP status code which is not `200`
 - Returns a body with an `error` property containing a `PreflightKitError`
