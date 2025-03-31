@@ -5,10 +5,8 @@
 There are two common issues causing this:
 
 1. The agent couldn't (properly) communicate with the extension. To analyze this further, please inspect the agent log.
-2. Your team within Steadybit may not have the preflight feature enabled. Inspect the team configuration via the Steadybit settings views to
-   ensure that preflight checks are enabled for your team.
-3. The preflight check is not properly registered. Ensure that the preflight check is correctly defined in the extension and that the agent has access to it.
-4. The preflight check is not properly configured for all experiments or a specific team. Ensure that the preflight check is enabled for the specific experiment or team you are testing. See: [Preflight Integration](https://platform.steadybit.com/settings/integrations/preflightAction).
+2. The preflight check is not properly registered. Ensure that the preflight check is correctly defined in the extension and that the agent has access to it.
+3. The preflight check is not properly configured for all experiments or a specific team. Ensure that the preflight check is enabled for the specific experiment or team you are testing. See: [Preflight Integration](https://platform.steadybit.com/settings/integrations/preflightAction).
 
 ## Why is my experiment still running despite a preflight check condition not being met?
 
