@@ -1,0 +1,46 @@
+name: Check Open API Spec (platform)
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 7 * * 1-5'
+
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
+
+      - name: Install oasdiff
+        run: go install github.com/oasdiff/oasdiff@v1.11.1
+
+      - name: Install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          chmod +x /usr/bin/yq
+
+      - name: Download specs
+        run: |
+          curl -L https://platform.steadybit.com/api/spec.yaml -o platform-spec.yaml
+          cp ../../openapi/spec.yml preflight-kit-spec.yml
+
+      - name: Filter specs for ExperimentExecutionAO and dependencies
+        run: |
+          # Run our filtering script to extract only ExperimentExecutionAO and its referenced components.
+          chmod +x ./filter_spec.sh
+          ./filter_spec.sh platform-spec.yaml filtered_platform-spec.yaml
+          ./filter_spec.sh preflight-kit-spec.yml filtered_preflight-kit-spec.yaml
+
+      - name: Print changes without ignores
+        working-directory: .github/workflows
+        run: oasdiff changelog filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format singleline
+
+      - name: Check breaking changes
+        working-directory: .github/workflows
+        run: oasdiff breaking filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format githubactions --fail-on WARN --err-ignore oasdiff-ignores/ignore-platform.txt --warn-ignore oasdiff-ignores/ignore-platform.txt
