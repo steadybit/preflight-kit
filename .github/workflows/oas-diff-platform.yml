@@ -28,7 +28,7 @@ jobs:
       - name: Download specs
         run: |
           curl -L https://platform.steadybit.com/api/spec.yaml -o platform-spec.yaml
-          cp ../../openapi/spec.yml preflight-kit-spec.yml
+          cp openapi/spec.yml preflight-kit-spec.yml
 
       - name: Filter specs for ExperimentExecutionAO and dependencies
         run: |
