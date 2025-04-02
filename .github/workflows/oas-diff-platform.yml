@@ -41,9 +41,7 @@ jobs:
           .github/workflows/filter_spec.sh preflight-kit-spec.yml filtered_preflight-kit-spec.yaml
 
       - name: Print changes without ignores
-        working-directory: .github/workflows
         run: oasdiff changelog filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format singleline
 
       - name: Check breaking changes
-        working-directory: .github/workflows
         run: oasdiff breaking filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format githubactions --fail-on WARN --err-ignore oasdiff-ignores/ignore-platform.txt --warn-ignore oasdiff-ignores/ignore-platform.txt
