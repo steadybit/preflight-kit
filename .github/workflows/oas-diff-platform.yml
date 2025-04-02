@@ -44,4 +44,4 @@ jobs:
         run: oasdiff changelog filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format singleline
 
       - name: Check breaking changes
-        run: oasdiff breaking filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format githubactions --fail-on WARN --err-ignore oasdiff-ignores/ignore-platform.txt --warn-ignore oasdiff-ignores/ignore-platform.txt
+        run: oasdiff breaking filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format githubactions --fail-on WARN --err-ignore .github/workflows/oasdiff-ignores/ignore-platform.txt --warn-ignore .github/workflows/oasdiff-ignores/ignore-platform.txt
