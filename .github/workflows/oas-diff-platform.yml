@@ -36,9 +36,9 @@ jobs:
       - name: Filter specs for ExperimentExecutionAO and dependencies
         run: |
           # Run our filtering script to extract only ExperimentExecutionAO and its referenced components.
-          chmod +x ./filter_spec.sh
-          ./filter_spec.sh platform-spec.yaml filtered_platform-spec.yaml
-          ./filter_spec.sh preflight-kit-spec.yml filtered_preflight-kit-spec.yaml
+          chmod +x .github/workflows/filter_spec.sh
+          .github/workflows/filter_spec.sh platform-spec.yaml filtered_platform-spec.yaml
+          .github/workflows/filter_spec.sh preflight-kit-spec.yml filtered_preflight-kit-spec.yaml
 
       - name: Print changes without ignores
         working-directory: .github/workflows
