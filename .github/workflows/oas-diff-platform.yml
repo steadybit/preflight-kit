@@ -22,8 +22,11 @@ jobs:
 
       - name: Install yq
         run: |
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
+          mkdir -p $HOME/bin
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O $HOME/bin/yq
+          chmod +x $HOME/bin/yq
+        env:
+          PATH: $HOME/bin:$PATH
 
       - name: Download specs
         run: |
