@@ -206,17 +206,17 @@ components:
           type: string
           description: Timestamp when the experiment was requested
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         created:
           type: string
           description: Timestamp when the experiment was created
           format: date-time
-          example: 2023-01-01T09:00:01Z
+          example: "2023-01-01T09:00:01Z"
         started:
           type: string
           description: Timestamp when the experiment was started
           format: date-time
-          example: 2023-01-01T09:00:02Z
+          example: "2023-01-01T09:00:02Z"
         experimentVersion:
           type: integer
           description: Experiment design version which can be used to identify changes
@@ -282,7 +282,7 @@ components:
           type: string
           description: Timestamp when the experiment ended
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         state:
           type: string
           description: "Current state of the experiment (e.g. CREATED, RUNNING, FAILED,\
@@ -309,15 +309,15 @@ components:
         name: Shop should survive a single pod outage
         hypothesis: When a single container from steadybit-demo/fashion-bestseller
           fails the shop is still working as expected.
-        requested: 2023-01-01T09:00:00.000000Z
-        created: 2023-01-01T09:00:01.000000Z
+        requested: "2023-01-01T09:00:00.000000Z"
+        created: "2023-01-01T09:00:01.000000Z"
         createdBy:
           username: ag1hb7ap-d299-47ab-998f-c2a53b433820
           name: Manuel
           pictureUrl: https://.../picture.png
         createdVia: UI
         experimentVersion: "5"
-        ended: 2023-01-01T09:10:00.000000Z
+        ended: "2023-01-01T09:10:00.000000Z"
         state: FAILED
         reason: Check failure.
     ExperimentExecutionStepActionAO:
@@ -348,12 +348,12 @@ components:
           type: string
           description: Timestamp when this experiment step was started
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         ended:
           type: string
           description: Timestamp when this experiment step ended
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         reason:
           type: string
           description: Reason in case this experiment step execution failed or errored
@@ -479,12 +479,12 @@ components:
           type: string
           description: Timestamp when this experiment step was started
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         ended:
           type: string
           description: Timestamp when this experiment step ended
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         reason:
           type: string
           description: Reason in case this experiment step execution failed or errored
@@ -633,12 +633,12 @@ components:
           type: string
           description: Timestamp when this experiment step was started
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         ended:
           type: string
           description: Timestamp when this experiment step ended
           format: date-time
-          example: 2023-01-01T09:00:00Z
+          example: "2023-01-01T09:00:00Z"
         reason:
           type: string
           description: Reason in case this experiment step execution failed or errored

@@ -21,7 +21,7 @@ jobs:
           go-version: 1.22
 
       - name: Install oasdiff
-        run: go install github.com/oasdiff/oasdiff@v1.11.1
+        run: go install github.com/tufin/oasdiff@v1.10.25
 
       - name: Install yq
         run: |
@@ -30,7 +30,8 @@ jobs:
 
       - name: Download specs
         run: |
-          curl -L https://platform.steadybit.com/api/spec.yaml -o platform-spec.yaml
+          curl -L https://platform.steadybit.com/api/spec/platform -o platform-spec.json
+          yq -p json -o yaml -P platform-spec.json > platform-spec.yaml
           cp openapi/spec.yml preflight-kit-spec.yml
 
       - name: Filter specs for ExperimentExecutionAO and dependencies
@@ -40,8 +41,11 @@ jobs:
           .github/workflows/filter_spec.sh platform-spec.yaml filtered_platform-spec.yaml
           .github/workflows/filter_spec.sh preflight-kit-spec.yml filtered_preflight-kit-spec.yaml
 
-      - name: Print changes without ignores
-        run: oasdiff changelog filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format singleline
-
-      - name: Check breaking changes
-        run: oasdiff breaking filtered_platform-spec.yaml filtered_preflight-kit-spec.yaml --max-circular-dep 20 --format githubactions --fail-on WARN --err-ignore .github/workflows/oasdiff-ignores/ignore-platform.txt --warn-ignore .github/workflows/oasdiff-ignores/ignore-platform.txt
+      - name: Compare Schemas with diff.py
+        run: |
+          python .github/workflows/diff.py \
+            --old filtered_preflight-kit-spec.yaml \
+            --new filtered_platform-spec.yaml \
+            --key components.schemas \
+            --exclude .github/workflows/api-spec-ignores/exclude.txt \
+            --fail-if-diff
