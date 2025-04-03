@@ -332,17 +332,17 @@ components:
           example: 40b0f797-912d-4256-8887-1553561962a9
         stepType:
           type: string
+          description: Type of this step execution (e.g. ACTION, WAIT)
+          example: ACTION
           enum: [ ACTION ]
         predecessorId:
           type: string
-          description: "Unique identifier of the step execution that precedes this\
-            \ step, null if it is the first step of a lane"
+          description: Unique identifier of the step execution that precedes this step, null if it is the first step of a lane
           format: uuid
           example: 40b0f797-912d-4256-8887-1553561962a9
         state:
           type: string
-          description: "Current state of this step in the experiment (e.g. RUNNING,\
-            \ FAILED, ERRORED, COMPLETED)"
+          description: Current state of this step in the experiment (e.g. RUNNING, FAILED, ERRORED, COMPLETED)
           example: RUNNING
         started:
           type: string
@@ -384,7 +384,7 @@ components:
           example: com.steadybit.extension_container.stress_cpu
         actionKind:
           type: string
-          description: "Kind of the action (e.g. attack, check, loadtest)"
+          description: Kind of the action (e.g. attack, check, loadtest)
           example: ATTACK
           enum:
             - ATTACK
@@ -393,7 +393,7 @@ components:
             - OTHER
             - BASIC
         radius:
-          $ref: "#/components/schemas/BlastRadiusAO"
+          $ref: '#/components/schemas/BlastRadiusAO'
         targetExecutions:
           type: array
           description: List of targets that are expected to be effected by this action.
@@ -412,7 +412,7 @@ components:
                 - key: container.host
                   value: docker-desktop
           items:
-            $ref: "#/components/schemas/TargetAO"
+            $ref: '#/components/schemas/TargetAO'
         totalTargetCount:
           type: integer
           description: Amount of targets that are effect int total
@@ -463,17 +463,17 @@ components:
           example: 40b0f797-912d-4256-8887-1553561962a9
         stepType:
           type: string
+          description: Type of this step execution (e.g. ACTION, WAIT)
           enum: [ WAIT ]
+          example: WAIT
         predecessorId:
           type: string
-          description: "Unique identifier of the step execution that precedes this\
-            \ step, null if it is the first step of a lane"
+          description: Unique identifier of the step execution that precedes this step, null if it is the first step of a lane
           format: uuid
           example: 40b0f797-912d-4256-8887-1553561962a9
         state:
           type: string
-          description: "Current state of this step in the experiment (e.g. RUNNING,\
-            \ FAILED, ERRORED, COMPLETED)"
+          description: Current state of this step in the experiment (e.g. RUNNING, FAILED, ERRORED, COMPLETED)
           example: RUNNING
         started:
           type: string
@@ -616,18 +616,16 @@ components:
           example: 40b0f797-912d-4256-8887-1553561962a9
         stepType:
           type: string
-          description: Type of the step (e.g. ACTION, WAIT)
+          description: Type of this step execution (e.g. ACTION, WAIT)
           example: ACTION
         predecessorId:
           type: string
-          description: "Unique identifier of the step execution that precedes this\
-            \ step, null if it is the first step of a lane"
+          description: Unique identifier of the step execution that precedes this step, null if it is the first step of a lane
           format: uuid
           example: 40b0f797-912d-4256-8887-1553561962a9
         state:
           type: string
-          description: "Current state of this step in the experiment (e.g. RUNNING,\
-            \ FAILED, ERRORED, COMPLETED)"
+          description: Current state of this step in the experiment (e.g. RUNNING, FAILED, ERRORED, COMPLETED)
           example: RUNNING
         started:
           type: string
@@ -674,12 +672,11 @@ components:
       discriminator:
         propertyName: stepType
         mapping:
-          ACTION: "#/components/schemas/ExperimentExecutionStepActionAO"
-          WAIT: "#/components/schemas/ExperimentExecutionStepWaitAO"
-        oneOf:
+          ACTION: '#/components/schemas/ExperimentExecutionStepActionAO'
+          WAIT: '#/components/schemas/ExperimentExecutionStepWaitAO'
       oneOf:
-        - $ref: "#/components/schemas/ExperimentExecutionStepActionAO"
-        - $ref: "#/components/schemas/ExperimentExecutionStepWaitAO"
+        - $ref: '#/components/schemas/ExperimentExecutionStepActionAO'
+        - $ref: '#/components/schemas/ExperimentExecutionStepWaitAO'
     BlastRadiusAO:
       type: object
       properties:

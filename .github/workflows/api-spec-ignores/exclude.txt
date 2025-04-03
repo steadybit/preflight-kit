@@ -1,1 +1,4 @@
 root['AbstractExperimentExecutionStepAO']['properties']['parameters']['additionalProperties']
+root['ExperimentExecutionStepActionAO']['properties']['stepType']['enum']
+root['ExperimentExecutionStepWaitAO']['properties']['stepType']['enum']
+root['ExperimentExecutionStepWaitAO']['properties']['stepType']['example']
