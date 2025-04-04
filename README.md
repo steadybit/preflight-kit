@@ -4,14 +4,14 @@
 
 The Steadybit PreflightKit enables the extension of Steadybit with new preflight capabilities that you can use to prevent experiment executions. For example, PreflightKit can be used to author open/closed source:
 
-- implement a preflight check based on your environment needs to allow or disallow experiment executions based on the experiment and its targets.
+- implement a preflight action based on your environment needs to allow or disallow experiment executions based on the experiment and its targets.
 
 ## Getting Started
 
 We recommend that you read the following documentation to get started with PreflightKit.
 
 - [Preflight API](/docs/preflight-api.md)
-- [How-To Write A Preflight Check](/docs/how-to/write-a-preflight-check.md)
+- [How-To Write A Preflight Action](/docs/how-to/write-a-preflight-action)
 - [Preflight Registration](/docs/preflight-registration.md)
 - [Terminology](/docs/terminology.md)
 - [Examples](/docs/examples.md)

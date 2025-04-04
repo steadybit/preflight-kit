@@ -1,10 +1,10 @@
 # Examples
 
-This document provides examples of preflight checks that can be implemented using PreflightKit.
+This document provides examples of preflight actions that can be implemented using PreflightKit.
 
-## Example Preflight Check Structure
+## Example Preflight Action Structure
 
-Preflight checks are typically implemented as Go structs that satisfy the preflight interface. Here's a basic example of a preflight check that demonstrates the structure:
+Preflight actions are typically implemented as Go structs that satisfy the preflight interface. Here's a basic example of a preflight action that demonstrates the structure:
 
 ```go
 package extpreflight
@@ -19,10 +19,10 @@ import (
 	"sync"
 )
 
-// MaintenanceWindowPreflight checks if experiments run within allowed time windows
+// MaintenanceWindowPreflight actions if experiments run within allowed time windows
 type MaintenanceWindowPreflight struct {
 	// You can add fields here for configuration, etc.
-	runningPreflights sync.Map // Used to track running preflight checks
+	runningPreflights sync.Map // Used to track running preflight actions
 	statusCounts      sync.Map // Used to count status calls
 }
 
@@ -49,7 +49,7 @@ func (p *MaintenanceWindowPreflight) Describe() preflight_kit_api.PreflightDescr
 	}
 }
 
-// Start initiates the preflight check
+// Start initiates the preflight action
 func (p *MaintenanceWindowPreflight) Start(_ context.Context, request preflight_kit_api.StartPreflightRequestBody) (*preflight_kit_api.StartResult, error) {
 	// Store the experiment execution details for later use
 	p.runningPreflights.Store(request.PreflightActionExecutionId, request.ExperimentExecution)
@@ -108,7 +108,7 @@ func (p *MaintenanceWindowPreflight) Status(_ context.Context, request preflight
 	return &preflight_kit_api.StatusResult{Completed: true}, nil
 }
 
-// Cancel stops the preflight check
+// Cancel stops the preflight action
 func (p *MaintenanceWindowPreflight) Cancel(_ context.Context, request preflight_kit_api.CancelPreflightRequestBody) (*preflight_kit_api.CancelResult, error) {
 	// Clean up any resources associated with this preflight
 	p.runningPreflights.Delete(request.PreflightActionExecutionId)
@@ -129,4 +129,4 @@ func (p *MaintenanceWindowPreflight) incrementStatusCounter(id uuid.UUID) int {
 
 
 
-These example demonstrate basic patterns for implementing preflight checks. Depending on your organization's needs, you can create more sophisticated checks that integrate with various systems to ensure experiments only run when conditions are appropriate.
+These example demonstrate basic patterns for implementing preflight actions. Depending on your organization's needs, you can create more sophisticated checks that integrate with various systems to ensure experiments only run when conditions are appropriate.

@@ -5,14 +5,14 @@ This document explains the preflight API, control flow and the contracts behind 
 ## Overview
 
 Preflights are implemented with the help of PreflightKit and the preflight API through an implementation of an extension. Extensions are HTTP servers
-implementing the preflight API to describe which preflight checks are supported and how to execute these. The following diagram illustrates who is issuing calls and in what
+implementing the preflight API to describe which preflight actions are supported and how to execute these. The following diagram illustrates who is issuing calls and in what
 phases.
 
 ![UML sequence diagram showing in what order the APIs are called](img/preflight-action-flow.drawio.svg)
 
 As can be seen above, the extension is called by the Steadybit agent in two phases:
 
-- In the preflight registration phase, Steadybit learns about the supported preflight checks. Once this phase is completed, preflights will be used within Steadybit
+- In the preflight registration phase, Steadybit learns about the supported preflight actions. Once this phase is completed, preflights will be used within Steadybit
   before the execution of experiments.
 - The preflight execution phase occurs whenever an experiment is about to be executed, allowing the system to prevent execution based on predefined criteria.
 
@@ -20,7 +20,7 @@ The following sections explain the various API endpoints, their responsibilities
 
 ## Preflight List
 
-As the name implies, the preflight list returns a list of supported preflight checks. Or, more specifically, HTTP endpoints that the agent should call to learn more about
+As the name implies, the preflight list returns a list of supported preflight actions. Or, more specifically, HTTP endpoints that the agent should call to learn more about
 the preflights.
 
 This endpoint needs to be [registered with Steadybit agents](./preflight-registration.md).
@@ -48,11 +48,11 @@ This endpoint needs to be [registered with Steadybit agents](./preflight-registr
 
 ## Preflight Description
 
-A preflight description is required for each preflight check. The HTTP endpoint serving the description is discovered through the preflight list endpoint.
+A preflight description is required for each preflight action. The HTTP endpoint serving the description is discovered through the preflight list endpoint.
 
-Preflight descriptions expose information about the presentation, configuration and behavior of preflight checks. For example:
+Preflight descriptions expose information about the presentation, configuration and behavior of preflight actions. For example:
 
-- What should the preflight check be called?
+- What should the preflight action be called?
 - What kind of experiment information is needed to make a preflight decision?
 
 ### Example
@@ -106,7 +106,7 @@ HTTP endpoints represent each phase. Steadybit learns about these endpoints thro
 
 ### Start
 
-The start phase initiates the preflight check process. This is where the initial validation of configuration parameters and the experiment setup can take place. This endpoint must respond within a few seconds. For longer-running validations, the actual check work should be done in the status phase.
+The start phase initiates the preflight action process. This is where the initial validation of configuration parameters and the experiment setup can take place. This endpoint must respond within a few seconds. For longer-running validations, the actual check work should be done in the status phase.
 
 #### Example
 
@@ -140,7 +140,7 @@ The start phase initiates the preflight check process. This is where the initial
 
 ### Status
 
-The status phase checks the current status of the preflight check. This is where the main validation logic occurs. For long-running checks (such as integrations with external approval systems), this endpoint will be called repeatedly until it returns `completed: true`. Steadybit calls this endpoint at the interval specified in the preflight description.
+The status phase checks the current status of the preflight action. This is where the main validation logic occurs. For long-running checks (such as integrations with external approval systems), this endpoint will be called repeatedly until it returns `completed: true`. Steadybit calls this endpoint at the interval specified in the preflight description.
 
 #### Example
 
@@ -173,7 +173,7 @@ The status phase checks the current status of the preflight check. This is where
 
 ### Cancel
 
-The cancel phase allows for cleanup of any resources associated with a preflight check. This is particularly important for long-running checks that might maintain state or connect to external systems.
+The cancel phase allows for cleanup of any resources associated with a preflight action. This is particularly important for long-running checks that might maintain state or connect to external systems.
 
 #### Example
 
@@ -206,7 +206,7 @@ The agent prevents the experiment execution if the extension:
 The `status` field in a `PreflightKitError` defines how Steadybit will display the error:
 
 - `failed` - The preflight has detected a condition that should prevent the experiment from running, such as being outside a maintenance window
-- `errored` - There was a technical error while executing the preflight check
+- `errored` - There was a technical error while executing the preflight action
 
 #### References
 
