@@ -11,7 +11,7 @@ The Steadybit PreflightKit enables the extension of Steadybit with new preflight
 We recommend that you read the following documentation to get started with PreflightKit.
 
 - [Preflight API](/docs/preflight-api.md)
-- [How-To Write A Preflight Action](/docs/how-to/write-a-preflight-action)
+- [How-To Write A Preflight Action](/docs/how-to/write-a-preflight-action.md)
 - [Preflight Registration](/docs/preflight-registration.md)
 - [Terminology](/docs/terminology.md)
 - [Examples](/docs/examples.md)
