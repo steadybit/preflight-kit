@@ -2,3 +2,9 @@ node_modules/
 *.iml
 /preflight_kit_api.go
 **/coverage.out
+
+
+/.github/workflows/platform-spec.json
+/.github/workflows/platform-spec.yaml
+/.github/workflows/filtered_platform-spec.yaml
+/.github/workflows/filtered_preflight-kit-spec.yaml
