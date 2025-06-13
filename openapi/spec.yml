@@ -303,21 +303,13 @@ components:
               origin: ENVIRONMENT
         executionProperties:
           type: object
-          additionalProperties:
-            type: object
-            description: The properties of the experiment execution
-            example:
-              EXAMPLE_CUSTOM_PROPERTY: Chuck Norris allows that execution
+          additionalProperties: true
           description: The properties of the experiment execution
           example:
             EXAMPLE_CUSTOM_PROPERTY: Chuck Norris allows that execution
         experimentProperties:
           type: object
-          additionalProperties:
-            type: object
-            description: The properties of the experiment at the time when the execution was created
-            example:
-              EXAMPLE_CUSTOM_PROPERTY: This property was set in the experiment design
+          additionalProperties: true
           description: The properties of the experiment at the time when the execution was created
           example:
             EXAMPLE_CUSTOM_PROPERTY: This property was set in the experiment design
@@ -385,11 +377,7 @@ components:
           example: false
         parameters:
           type: object
-          additionalProperties:
-            type: object
-            description: Step-specific parameters of the experiment step configuration
-            example:
-              duration: 10s
+          additionalProperties: true
           description: Step-specific parameters of the experiment step configuration
           example:
             duration: 10s
@@ -516,11 +504,7 @@ components:
           example: false
         parameters:
           type: object
-          additionalProperties:
-            type: object
-            description: Step-specific parameters of the experiment step configuration
-            example:
-              duration: 10s
+          additionalProperties: true
           description: Step-specific parameters of the experiment step configuration
           example:
             duration: 10s

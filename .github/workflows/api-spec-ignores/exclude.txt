@@ -1,5 +1,4 @@
 root['AbstractExperimentExecutionStepAO']['required']
-root['AbstractExperimentExecutionStepAO']['properties']['parameters']['additionalProperties']
 root['AbstractExperimentExecutionStepAO']['discriminator']
 root['AbstractExperimentExecutionStepAO']['properties']['stepType']
 root['ExperimentExecutionStepActionAO']['required']
