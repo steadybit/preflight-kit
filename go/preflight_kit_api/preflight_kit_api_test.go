@@ -289,7 +289,7 @@ func TestPreflightKitObjects(t *testing.T) {
 			Email:      &email,
 			Name:       &name,
 			PictureUrl: &pictureUrl,
-			Username:   &username,
+			Username:   username,
 		}
 		markAsUsed(t, us)
 	})

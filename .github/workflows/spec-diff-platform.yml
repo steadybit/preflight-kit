@@ -20,37 +20,13 @@ jobs:
         with:
           go-version: '^1.24.1'
 
-      - name: Install oasdiff
-        run: go install github.com/oasdiff/oasdiff@v1.11.4
-
-      - name: Install yq
+      - name: Install dependencies
         run: |
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
           sudo chmod +x /usr/bin/yq
+          python3 -m pip install --upgrade pip
+          pip3 install deepdiff pyyaml
 
-      - name: Download specs
-        run: |
-          curl -L https://platform.steadybit.com/api/spec/platform -o platform-spec.json
-          yq -p json -o yaml -P platform-spec.json > platform-spec.yaml
-          cp openapi/spec.yml preflight-kit-spec.yml
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install deepdiff
-
-      - name: Filter specs for ExperimentExecutionAO and dependencies
-        run: |
-          # Run our filtering script to extract only ExperimentExecutionAO and its referenced components.
-          chmod +x .github/workflows/filter_spec.sh
-          .github/workflows/filter_spec.sh platform-spec.yaml filtered_platform-spec.yaml
-          .github/workflows/filter_spec.sh preflight-kit-spec.yml filtered_preflight-kit-spec.yaml
-
-      - name: Compare Schemas with diff.py
-        run: |
-          python .github/workflows/diff.py \
-            --old filtered_preflight-kit-spec.yaml \
-            --new filtered_platform-spec.yaml \
-            --key components.schemas \
-            --exclude .github/workflows/api-spec-ignores/exclude.txt \
-            --fail-if-diff
+      - name: Diff OpenAPI spec with the platform one
+        working-directory: openapi/tools
+        run: make diff-platform-preflight-spec
