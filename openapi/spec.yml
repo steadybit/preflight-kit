@@ -735,15 +735,19 @@ components:
         value: 51152:2376
     UserSummaryAO:
       type: object
+      required:
+        - username
       properties:
         username:
           maxLength: 255
           minLength: 0
+          type: string
           description: Username of the user, internal identifier of Steadybit
           example: 13av2737-b318-4048-a79d-4789d645bc31
-          type: string
         name:
           type: string
+          description: Name of the user
+          example: Jane Doe
         pictureUrl:
           type: string
         email:
