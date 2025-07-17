@@ -301,18 +301,12 @@ components:
             httpEndpoint:
               value: http://dev.shop.products.internal
               origin: ENVIRONMENT
-        executionProperties:
+        properties:
           type: object
           additionalProperties: true
           description: The properties of the experiment execution
           example:
             EXAMPLE_CUSTOM_PROPERTY: Chuck Norris allows that execution
-        experimentProperties:
-          type: object
-          additionalProperties: true
-          description: The properties of the experiment at the time when the execution was created
-          example:
-            EXAMPLE_CUSTOM_PROPERTY: This property was set in the experiment design
       description: A single experiment execution that was triggered from a single
         experiment.
       example:
