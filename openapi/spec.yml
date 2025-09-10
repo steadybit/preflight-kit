@@ -414,7 +414,7 @@ components:
                 - key: container.host
                   value: docker-desktop
           items:
-            $ref: '#/components/schemas/TargetAO'
+            $ref: '#/components/schemas/TargetExecutionAO'
         totalTargetCount:
           type: integer
           description: Amount of targets that are effect int total
@@ -531,7 +531,7 @@ components:
         httpEndpoint:
           value: http://dev.shop.products.internal
           origin: ENVIRONMENT
-    TargetAO:
+    TargetExecutionAO:
       type: object
       properties:
         type:
