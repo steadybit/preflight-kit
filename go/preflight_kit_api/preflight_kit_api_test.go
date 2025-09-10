@@ -262,8 +262,8 @@ func TestPreflightKitObjects(t *testing.T) {
 		markAsUsed(t, st)
 	})
 
-	// TargetAO
-	t.Run("TargetAO", func(t *testing.T) {
+	// TargetExecutionAO
+	t.Run("TargetExecutionAO", func(t *testing.T) {
 		name := "target-1"
 		agentHostname := "agent-1"
 		attr := AttributeAO{
@@ -271,7 +271,7 @@ func TestPreflightKitObjects(t *testing.T) {
 			Value: "linux",
 		}
 		attributes := []AttributeAO{attr}
-		ta := TargetAO{
+		ta := TargetExecutionAO{
 			AgentHostname: &agentHostname,
 			Attributes:    &attributes,
 			Name:          &name,
