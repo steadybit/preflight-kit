@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+- Added state handling for preflight actions (similar to action-kit) (In development, requires new, not yet released agent)
+
 ## 1.2.0
 
 - Renamed `TargetAO` to `TargetExecutionAO`.
