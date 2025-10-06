@@ -124,6 +124,8 @@ components:
           $ref: '#/components/schemas/PreflightState'
         error:
           $ref: '#/components/schemas/PreflightKitError'
+      required:
+        - state
     StatusResult:
       properties:
         completed:
@@ -800,6 +802,7 @@ components:
                 $ref: '#/components/schemas/PreflightState'
             required:
               - preflightActionExecutionId
+              - state
     CancelPreflightRequestBody:
       title: Stop Preflight Request
       description: The HTTP request payload passed to the stop/cancel preflight endpoints.
@@ -818,6 +821,7 @@ components:
                 $ref: '#/components/schemas/PreflightState'
             required:
               - preflightActionExecutionId
+              - state
   responses:
     PreflightListResponse:
       title: Preflight List Response
