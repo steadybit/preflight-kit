@@ -6,17 +6,22 @@ package preflight_kit_sdk
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
-	"github.com/steadybit/extension-kit/exthttp"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/heartbeat"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/state_persister"
 	"net/http"
+	"os"
 	"reflect"
 	"runtime/coverage"
 	"sync"
+	"syscall"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
+	"github.com/steadybit/extension-kit/extconversion"
+	"github.com/steadybit/extension-kit/exthttp"
+	"github.com/steadybit/extension-kit/extsignals"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/heartbeat"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/state_persister"
 )
 
 var (
@@ -32,21 +37,23 @@ type stopEvent struct {
 	preflightActionExecutionId uuid.UUID
 }
 
-type Preflight interface {
+type Preflight[T any] interface {
+	// NewEmptyState creates a new empty state. A pointer to this state is passed to the other methods.
+	NewEmptyState() T
 	// Describe returns the preflight description.
 	Describe() preflight_kit_api.PreflightDescription
 	// Start is called when the preflight should actually happen.
 	// [Details](https://github.com/steadybit/preflight-kit/blob/main/docs/preflight-api.md#start)
-	Start(ctx context.Context, request preflight_kit_api.StartPreflightRequestBody) (*preflight_kit_api.StartResult, error)
+	Start(ctx context.Context, state *T) (*preflight_kit_api.StartResult, error)
 	// Status is used to observe the current status of the preflight. This is called periodically by the preflight-kit if time control [preflight_kit_api.TimeControlInternal] or [preflight_kit_api.TimeControlExternal] is used.
 	// [Details](https://github.com/steadybit/preflight-kit/blob/main/docs/preflight-api.md#status)
-	Status(ctx context.Context, request preflight_kit_api.StatusPreflightRequestBody) (*preflight_kit_api.StatusResult, error)
+	Status(ctx context.Context, state *T) (*preflight_kit_api.StatusResult, error)
 }
-type PreflightWithCancel interface {
-	Preflight
+type PreflightWithCancel[T any] interface {
+	Preflight[T]
 	// Cancel is used to clean up any leftovers. This method is optional.
 	// [Details](https://github.com/steadybit/preflight-kit/blob/main/docs/preflight-api.md#cancel)
-	Cancel(ctx context.Context, request preflight_kit_api.CancelPreflightRequestBody) (*preflight_kit_api.CancelResult, error)
+	Cancel(ctx context.Context, state *T) (*preflight_kit_api.CancelResult, error)
 }
 
 func CancelAllActivePreflights(reason string) {
@@ -86,6 +93,19 @@ func CancelPreflight(ctx context.Context, preflightActionExecutionId uuid.UUID, 
 
 	preflightType := reflect.ValueOf(action)
 	if cancelMethod := preflightType.MethodByName("Cancel"); !cancelMethod.IsNil() {
+		rState := preflightType.MethodByName("NewEmptyState").Call(nil)[0]
+		state := reflect.New(rState.Type()).Interface()
+
+		if err := extconversion.Convert(persistedState.State, &state); err != nil {
+			log.Error().
+				Str("preflightActionId", persistedState.PreflightActionId).
+				Str("preflightActionExecutionId", persistedState.PreflightActionExecutionId.String()).
+				Str("reason", reason).
+				Err(err).
+				Msg("failed to convert state, cannot stop active preflight")
+			return
+		}
+
 		log.Info().
 			Str("preflightActionId", persistedState.PreflightActionId).
 			Str("preflightActionExecutionId", preflightActionExecutionId.String()).
@@ -94,7 +114,7 @@ func CancelPreflight(ctx context.Context, preflightActionExecutionId uuid.UUID, 
 
 		markAsStopped(preflightActionExecutionId, reason)
 
-		if err := cancelMethod.Call([]reflect.Value{reflect.ValueOf(ctx), reflect.ValueOf(preflight_kit_api.CancelPreflightRequestBody{PreflightActionExecutionId: preflightActionExecutionId})})[1].Interface(); err != nil {
+		if err := cancelMethod.Call([]reflect.Value{reflect.ValueOf(ctx), reflect.ValueOf(state)})[1].Interface(); err != nil {
 			log.Warn().
 				Str("preflightActionId", persistedState.PreflightActionId).
 				Str("preflightActionExecutionId", preflightActionExecutionId.String()).
@@ -138,7 +158,20 @@ func handleCoverageCounters(w http.ResponseWriter, _ *http.Request, _ []byte) {
 	}
 }
 
-func RegisterPreflight(a Preflight) {
+func RegisterPreflight[T any](a Preflight[T]) {
+	//register "StopPreflights" signal handler with the first registered preflight
+	if len(registeredPreflights) == 0 {
+		extsignals.AddSignalHandler(extsignals.SignalHandler{
+			Handler: func(signal os.Signal) {
+				signalName := extsignals.GetSignalName(signal.(syscall.Signal))
+
+				log.Debug().Str("signal", signalName).Msg("received signal - stopping all active preflights")
+				CancelAllActivePreflights(fmt.Sprintf("received signal %s", signalName))
+			},
+			Order: extsignals.OrderStopActions,
+			Name:  "StopPreflights",
+		})
+	}
 	adapter := newPreflightHttpAdapter(a)
 	registeredPreflights[adapter.description.Id] = a
 	adapter.registerHandlers()

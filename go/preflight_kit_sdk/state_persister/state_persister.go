@@ -6,13 +6,17 @@ package state_persister
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/uuid"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
+
 	"sync"
 )
 
 type PersistedState struct {
 	PreflightActionExecutionId uuid.UUID
 	PreflightActionId          string
+	State                      preflight_kit_api.PreflightState
 }
 
 type StatePersister interface {

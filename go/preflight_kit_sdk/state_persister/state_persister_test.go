@@ -6,6 +6,7 @@ package state_persister
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -20,9 +21,9 @@ func TestInmemoryStatePersister_basics(t *testing.T) {
 	exe1 := uuid.New()
 	exe2 := uuid.New()
 
-	err := persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1"})
+	err := persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1", preflight_kit_api.PreflightState{"test": 1}})
 	require.NoError(t, err)
-	err = persister.PersistState(context.Background(), &PersistedState{exe2, "preflight-1"})
+	err = persister.PersistState(context.Background(), &PersistedState{exe2, "preflight-1", preflight_kit_api.PreflightState{"test": 2}})
 	require.NoError(t, err)
 
 	executionIds, err := persister.GetExecutionIds(context.Background())
@@ -40,7 +41,7 @@ func TestInmemoryStatePersister_basics(t *testing.T) {
 func TestInmemoryStatePersister_should_ignore_not_found(t *testing.T) {
 	persister := NewInmemoryStatePersister()
 	exe1 := uuid.New()
-	err := persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1"})
+	err := persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1", preflight_kit_api.PreflightState{"test": 1}})
 	require.NoError(t, err)
 
 	err = persister.DeleteState(context.Background(), uuid.New())
@@ -54,10 +55,10 @@ func TestInmemoryStatePersister_should_ignore_not_found(t *testing.T) {
 func TestInmemoryStatePersister_should_update_existing_values(t *testing.T) {
 	persister := NewInmemoryStatePersister()
 	exe1 := uuid.New()
-	err := persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1"})
+	err := persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1", preflight_kit_api.PreflightState{"test": 1}})
 	require.NoError(t, err)
 
-	err = persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1"})
+	err = persister.PersistState(context.Background(), &PersistedState{exe1, "preflight-1", preflight_kit_api.PreflightState{"test": 100}})
 	require.NoError(t, err)
 
 	executionIds, err := persister.GetExecutionIds(context.Background())
@@ -69,4 +70,5 @@ func TestInmemoryStatePersister_should_update_existing_values(t *testing.T) {
 	require.NotNil(t, state)
 	require.Equal(t, executionIds[0], state.PreflightActionExecutionId)
 	require.Equal(t, "preflight-1", state.PreflightActionId)
+	require.Equal(t, 100, state.State["test"])
 }
