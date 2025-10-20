@@ -44,7 +44,7 @@ type Preflight[T any] interface {
 	Describe() preflight_kit_api.PreflightDescription
 	// Start is called when the preflight should actually happen.
 	// [Details](https://github.com/steadybit/preflight-kit/blob/main/docs/preflight-api.md#start)
-	Start(ctx context.Context, state *T) (*preflight_kit_api.StartResult, error)
+	Start(ctx context.Context, state *T, request preflight_kit_api.StartPreflightRequestBody) (*preflight_kit_api.StartResult, error)
 	// Status is used to observe the current status of the preflight. This is called periodically by the preflight-kit if time control [preflight_kit_api.TimeControlInternal] or [preflight_kit_api.TimeControlExternal] is used.
 	// [Details](https://github.com/steadybit/preflight-kit/blob/main/docs/preflight-api.md#status)
 	Status(ctx context.Context, state *T) (*preflight_kit_api.StatusResult, error)

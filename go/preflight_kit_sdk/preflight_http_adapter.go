@@ -56,7 +56,7 @@ func (a *preflightHttpAdapter[T]) handleStart(w http.ResponseWriter, r *http.Req
 	}
 
 	state := a.preflight.NewEmptyState()
-	result, err := a.preflight.Start(r.Context(), &state)
+	result, err := a.preflight.Start(r.Context(), &state, parsedBody)
 	if result == nil {
 		result = &preflight_kit_api.StartResult{}
 	}

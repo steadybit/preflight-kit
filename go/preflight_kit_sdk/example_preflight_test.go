@@ -60,7 +60,7 @@ func (preflight *ExamplePreflight) Describe() preflight_kit_api.PreflightDescrip
 	}
 }
 
-func (preflight *ExamplePreflight) Start(_ context.Context, state *ExampleState) (*preflight_kit_api.StartResult, error) {
+func (preflight *ExamplePreflight) Start(_ context.Context, state *ExampleState, _ preflight_kit_api.StartPreflightRequestBody) (*preflight_kit_api.StartResult, error) {
 	preflight.calls <- Call{"Start", []interface{}{state}}
 	state.TestStep = "Prepare"
 	return &preflight_kit_api.StartResult{}, nil
