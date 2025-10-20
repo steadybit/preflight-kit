@@ -2,7 +2,7 @@
 
 ## 1.3.0
 
-- Added state handling for preflight actions (similar to action-kit) (In development, requires new, not yet released agent)
+- Added state handling for preflight actions (similar to action-kit) (requires agent >= 2.2.1)
 
 ## 1.2.0
 

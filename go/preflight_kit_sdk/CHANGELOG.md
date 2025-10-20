@@ -2,7 +2,7 @@
 
 ## 2.0.0
 
-- Added state handling for preflight actions
+- Added state handling for preflight actions (requires agent >= 2.2.1)
 
 ## 1.0.1
 
