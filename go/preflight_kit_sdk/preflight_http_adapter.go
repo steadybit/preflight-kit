@@ -60,22 +60,32 @@ func (a *preflightHttpAdapter[T]) handleStart(w http.ResponseWriter, r *http.Req
 	if result == nil {
 		result = &preflight_kit_api.StartResult{}
 	}
-	if err != nil {
-		if extensionError, ok := err.(extension_kit.ExtensionError); ok {
-			exthttp.WriteError(w, extensionError)
-		} else {
-			exthttp.WriteError(w, extension_kit.ToError("Failed to start preflight.", err))
-		}
-		return
+
+	if result.State != nil {
+		exthttp.WriteError(w, extension_kit.ToError("Please modify the state using the given state pointer.", err))
 	}
 
 	var convertedState preflight_kit_api.PreflightState
-	err = extconversion.Convert(state, &convertedState)
-	if err != nil {
-		exthttp.WriteError(w, extension_kit.ToError("Failed to encode action state.", err))
+	conversionErr := extconversion.Convert(state, &convertedState)
+	if conversionErr != nil {
+		exthttp.WriteError(w, extension_kit.ToError("Failed to encode action state.", conversionErr))
 		return
 	}
 	result.State = convertedState
+
+	if err != nil {
+		var extensionError *extension_kit.ExtensionError
+		isExtensionError := errors.As(err, &extensionError)
+		if !isExtensionError {
+			extensionError = extutil.Ptr(extension_kit.ToError("Failed to start preflight.", err))
+		}
+		result.Error = &preflight_kit_api.PreflightKitError{
+			Title:    extensionError.Title,
+			Detail:   extensionError.Detail,
+			Type:     extensionError.Type,
+			Instance: extensionError.Instance,
+		}
+	}
 
 	if a.description.Cancel != nil {
 		err = statePersister.PersistState(r.Context(), &state_persister.PersistedState{PreflightActionExecutionId: parsedBody.PreflightActionExecutionId, PreflightActionId: a.description.Id, State: convertedState})
@@ -141,27 +151,32 @@ func (a *preflightHttpAdapter[T]) handleStatus(w http.ResponseWriter, r *http.Re
 	if result == nil {
 		result = &preflight_kit_api.StatusResult{}
 	}
-	if err != nil {
-		var extErr *extension_kit.ExtensionError
-		if errors.As(err, &extErr) {
-			exthttp.WriteError(w, *extErr)
-		} else {
-			exthttp.WriteError(w, extension_kit.ToError("Failed to read status.", err))
-		}
-		return
-	}
 
 	if result.State != nil {
 		exthttp.WriteError(w, extension_kit.ToError("Please modify the state using the given state pointer.", err))
 	}
 
 	var convertedState preflight_kit_api.PreflightState
-	err = extconversion.Convert(state, &convertedState)
-	if err != nil {
-		exthttp.WriteError(w, extension_kit.ToError("Failed to encode preflight state.", err))
+	conversionErr := extconversion.Convert(state, &convertedState)
+	if conversionErr != nil {
+		exthttp.WriteError(w, extension_kit.ToError("Failed to encode preflight state.", conversionErr))
 		return
 	}
 	result.State = &convertedState
+
+	if err != nil {
+		var extensionError *extension_kit.ExtensionError
+		isExtensionError := errors.As(err, &extensionError)
+		if !isExtensionError {
+			extensionError = extutil.Ptr(extension_kit.ToError("Failed to read preflight status.", err))
+		}
+		result.Error = &preflight_kit_api.PreflightKitError{
+			Title:    extensionError.Title,
+			Detail:   extensionError.Detail,
+			Type:     extensionError.Type,
+			Instance: extensionError.Instance,
+		}
+	}
 
 	if a.description.Cancel != nil {
 		err = statePersister.PersistState(r.Context(), &state_persister.PersistedState{PreflightActionExecutionId: parsedBody.PreflightActionExecutionId, PreflightActionId: a.description.Id, State: convertedState})
