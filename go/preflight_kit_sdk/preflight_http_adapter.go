@@ -17,7 +17,7 @@ import (
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/extension-kit/extutil"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/state_persister"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/v2/state_persister"
 )
 
 const (

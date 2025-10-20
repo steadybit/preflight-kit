@@ -20,8 +20,8 @@ import (
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/extension-kit/extsignals"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/heartbeat"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/state_persister"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/v2/heartbeat"
+	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/v2/state_persister"
 )
 
 var (
