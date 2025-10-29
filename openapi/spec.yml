@@ -236,7 +236,7 @@ components:
           format: int32
           example: 5
         createdBy:
-          $ref: "#/components/schemas/UserSummaryAO"
+          $ref: '#/components/schemas/UserSummaryAO'
         createdVia:
           type: string
           description: The creation trigger that caused this experiment execution
@@ -287,9 +287,9 @@ components:
                       value: docker-desktop
               totalTargetCount: 1
           items:
-            $ref: "#/components/schemas/AbstractExperimentExecutionStepAO"
+            $ref: '#/components/schemas/AbstractExperimentExecutionStepAO'
         canceledBy:
-          $ref: "#/components/schemas/UserSummaryAO"
+          $ref: '#/components/schemas/UserSummaryAO'
         ended:
           type: string
           description: Timestamp when the experiment ended
@@ -297,8 +297,7 @@ components:
           example: "2023-01-01T09:00:00Z"
         state:
           type: string
-          description: "Current state of the experiment (e.g. CREATED, RUNNING, FAILED,\
-            \ ERRORED, COMPLETED)"
+          description: Current state of the experiment (e.g. CREATED, RUNNING, FAILED, ERRORED, COMPLETED)
           example: RUNNING
         reason:
           type: string
@@ -307,7 +306,7 @@ components:
         variables:
           type: object
           additionalProperties:
-            $ref: "#/components/schemas/ExperimentExecutionVariableAO"
+            $ref: '#/components/schemas/ExperimentExecutionVariableAO'
           description: Variables and their origins that have been used for this execution
           example:
             httpEndpoint:
@@ -339,9 +338,9 @@ components:
         state: FAILED
         reason: Check failure.
     ExperimentExecutionStepActionAO:
-      type: object
       required:
         - stepType
+      type: object
       properties:
         id:
           type: string
@@ -466,9 +465,9 @@ components:
                 value: docker-desktop
         totalTargetCount: 1
     ExperimentExecutionStepWaitAO:
-      type: object
       required:
         - stepType
+      type: object
       properties:
         id:
           type: string
@@ -568,8 +567,7 @@ components:
           type: string
           description: Optional additional reason details on a per target-level why
             the the experiment failed or errored.
-          example: "Could not read state of target container: exit status 1 (time=\"\
-            2023-09-29T12:41:32Z\" level=error msg=\"container does not exist\""
+          example: 'Could not read state of target container: exit status 1 (time="2023-09-29T12:41:32Z" level=error msg="container does not exist"'
         agentHostname:
           type: string
           description: The agent that processed this target-action command and forwarded
@@ -591,7 +589,7 @@ components:
             - key: container.engine
               value: docker
           items:
-            $ref: "#/components/schemas/AttributeAO"
+            $ref: '#/components/schemas/AttributeAO'
       description: A target that is expected to be effected by this action.
       example:
         type: container
@@ -615,9 +613,9 @@ components:
           values:
             - docker-desktop/minikube
     AbstractExperimentExecutionStepAO:
-      type: object
       required:
         - stepType
+      type: object
       properties:
         id:
           type: string
@@ -659,11 +657,6 @@ components:
         parameters:
           type: object
           additionalProperties: true
-#          additionalProperties:
-#            type: object
-#            description: Step-specific parameters of the experiment step configuration
-#            example:
-#              duration: 10s
           description: Step-specific parameters of the experiment step configuration
           example:
             duration: 10s
@@ -707,7 +700,7 @@ components:
           format: int32
           example: 2
         predicate:
-          $ref: "#/components/schemas/TargetPredicate"
+          $ref: '#/components/schemas/TargetPredicate'
       description: Blast radius that is applied to define the set of targets as well
         as an optional random subset
       example:
@@ -728,8 +721,7 @@ components:
       properties:
         key:
           type: string
-          description: "The key of the attribute, may be associated multiple times\
-            \ to the same target"
+          description: The key of the attribute, may be associated multiple times to the same target
           example: container.engine
         value:
           type: string
@@ -740,9 +732,9 @@ components:
         key: container.port
         value: 51152:2376
     UserSummaryAO:
-      type: object
       required:
         - username
+      type: object
       properties:
         username:
           maxLength: 255
