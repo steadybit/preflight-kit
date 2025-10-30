@@ -351,7 +351,6 @@ components:
           type: string
           description: Type of this step execution (e.g. ACTION, WAIT)
           example: ACTION
-          enum: [ ACTION ]
         predecessorId:
           type: string
           description: Unique identifier of the step execution that precedes this step, null if it is the first step of a lane
@@ -377,8 +376,7 @@ components:
           example: Couldn't read state of container...
         ignoreFailure:
           type: boolean
-          description: Whether the experiment should fail/error immediately in case
-            this step fails/errors.
+          description: Whether the experiment should fail/error immediately in case this step fails/errors.
           example: false
         parameters:
           type: object
@@ -388,8 +386,7 @@ components:
             duration: 10s
         customLabel:
           type: string
-          description: Custom label assigned during experiment design to express the
-            intention of this step
+          description: Custom label assigned during experiment design to express the intention of this step
           example: Container 'xyz' can not be reached
         actionId:
           type: string
@@ -409,9 +406,7 @@ components:
           $ref: '#/components/schemas/BlastRadiusAO'
         targetExecutions:
           type: array
-          description: List of targets that are expected to be effected by this action.
-            This list may change in case targets aren't available at the specific
-            time of execution
+          description: List of targets that are expected to be effected by this action. This list may change in case targets aren't available at the specific time of execution
           example:
             - type: container
               name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
@@ -477,8 +472,7 @@ components:
         stepType:
           type: string
           description: Type of this step execution (e.g. ACTION, WAIT)
-          enum: [ WAIT ]
-          example: WAIT
+          example: ACTION
         predecessorId:
           type: string
           description: Unique identifier of the step execution that precedes this step, null if it is the first step of a lane
@@ -504,8 +498,7 @@ components:
           example: Couldn't read state of container...
         ignoreFailure:
           type: boolean
-          description: Whether the experiment should fail/error immediately in case
-            this step fails/errors.
+          description: Whether the experiment should fail/error immediately in case this step fails/errors.
           example: false
         parameters:
           type: object
@@ -515,8 +508,7 @@ components:
             duration: 10s
         customLabel:
           type: string
-          description: Custom label assigned during experiment design to express the
-            intention of this step
+          description: Custom label assigned during experiment design to express the intention of this step
           example: Container 'xyz' can not be reached
       description: A wait step that is executed as part of an experiment.
       example:
@@ -651,8 +643,7 @@ components:
           example: Couldn't read state of container...
         ignoreFailure:
           type: boolean
-          description: Whether the experiment should fail/error immediately in case
-            this step fails/errors.
+          description: Whether the experiment should fail/error immediately in case this step fails/errors.
           example: false
         parameters:
           type: object
@@ -662,8 +653,7 @@ components:
             duration: 10s
         customLabel:
           type: string
-          description: Custom label assigned during experiment design to express the
-            intention of this step
+          description: Custom label assigned during experiment design to express the intention of this step
           example: Container 'xyz' can not be reached
       description: A step that is executed as part of an experiment.
       example:

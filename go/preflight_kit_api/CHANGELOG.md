@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 (Next Release)
+
+- Aligned the spec to the platform OpenApi spec - as a result the constants for "ExperimentExecutionStepWaitAOStepType" and "ExperimentExecutionStepActionAOStepType" has been removed.
+
+
 ## 1.3.0
 
 - Added state handling for preflight actions (similar to action-kit) (requires agent >= 2.2.1)
