@@ -212,3 +212,33 @@ The `status` field in a `PreflightKitError` defines how Steadybit will display t
 
 - [Go API](https://github.com/steadybit/preflight-kit/tree/main/go/preflight_kit_api): `PreflightKitError`
 - [OpenAPI Schema](https://github.com/steadybit/preflight-kit/tree/main/openapi): `PreflightKitError`
+
+### Property Modifications
+
+Preflight Actions can update properties for the current experiment execution from the `start`, `status` and `cancel` endpoints.
+
+The response body of these endpoints can contain an optional `modifications` attribute. This attribute is a list of property modifications to be applied.
+
+The following example shows how to set a property named `example-property` with value `example-value`.
+
+```json
+{
+  "modifications": [
+    {
+      "type": "set_property_value",
+      "property": "example-property",
+      "value": "example-value"
+    }
+  ]
+}
+```
+
+- Properties that have been assigned to an experiment design are copied to each experiment execution before the start.
+  In order to update the value via preflight action, it needs to be configured as editable for executions.
+- Properties that are not yet present will be added to the execution and will keep editable.
+- All properties that gets modified during an experiment execution needs a matching property definition.
+
+#### References
+
+- [Go API](https://github.com/steadybit/preflight-kit/tree/main/go/preflight_kit_api): `ExecutionModifications`
+- [OpenAPI Schema](https://github.com/steadybit/preflight-kit/tree/main/openapi): `ExecutionModification`
