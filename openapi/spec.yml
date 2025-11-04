@@ -124,6 +124,8 @@ components:
           $ref: '#/components/schemas/PreflightState'
         error:
           $ref: '#/components/schemas/PreflightKitError'
+        modifications:
+          $ref: '#/components/schemas/ExecutionModifications'
       required:
         - state
     StatusResult:
@@ -135,12 +137,16 @@ components:
           $ref: '#/components/schemas/PreflightState'
         error:
           $ref: '#/components/schemas/PreflightKitError'
+        modifications:
+          $ref: '#/components/schemas/ExecutionModifications'
       required:
         - completed
     CancelResult:
       properties:
         error:
           $ref: '#/components/schemas/PreflightKitError'
+        modifications:
+          $ref: '#/components/schemas/ExecutionModifications'
     ReadHttpMethod:
       type: string
       enum:
@@ -746,6 +752,78 @@ components:
         name: Manuel
         email: aa@bb.com
         pictureUrl: https://.../picture.png
+    ExecutionModifications:
+      title: ExecutionModifications
+      description: >-
+        A list of execution modifications (e.g. property updates)
+        Any of
+          - `preflight_kit_api.ExecutionModificationSetPropertyValue`
+          - `preflight_kit_api.ExecutionModificationAddValueToListProperty`
+      type: array
+      items:
+        $ref: '#/components/schemas/ExecutionModification'
+    ExecutionModification:
+      title: ExecutionModification
+      description: >-
+        An execution modification (e.g. property update)
+        Any of
+          - `preflight_kit_api.ExecutionModificationSetPropertyValue`
+          - `preflight_kit_api.ExecutionModificationAddValueToListProperty`
+      anyOf:
+        - $ref: '#/components/schemas/ExecutionModificationSetPropertyValue'
+        - $ref: '#/components/schemas/ExecutionModificationAddValueToListProperty'
+    ExecutionModificationSetPropertyValue:
+      title: ExecutionModificationSetPropertyValue
+      description: >-
+        Set the value of a property within the experiment execution's properties.
+      type: object
+      properties:
+        type:
+          description: >-
+            The type of the modification. Needs to be set to `preflight_kit_api.SetPropertyValue`.
+          type: string
+          enum: [ set_property_value ]
+        propertyKey:
+          description: >-
+            The key of the property.
+          type: string
+          maxLength: 64
+        value:
+          description: >-
+            The value to set.
+          type: object
+          additionalProperties: true
+          x-go-type: interface{}
+      required:
+        - type
+        - propertyKey
+        - value
+    ExecutionModificationAddValueToListProperty:
+      title: ExecutionModificationAddValueToListProperty
+      description: >-
+        Adds a value to a list property within the experiment execution's properties.
+      type: object
+      properties:
+        type:
+          description: >-
+            The type of the modification. Needs to be set to `preflight_kit_api.AddValueToListProperty`.
+          type: string
+          enum: [ add_value_to_list_property ]
+        propertyKey:
+          description: >-
+            The key of the property.
+          type: string
+          maxLength: 64
+        value:
+          description: >-
+            The value to add.
+          type: object
+          additionalProperties: true
+          x-go-type: interface{}
+      required:
+        - type
+        - propertyKey
+        - value
   requestBodies:
     StartPreflightRequestBody:
       title: Start Preflight Request
