@@ -4,7 +4,7 @@
 ##  pip3 install pyyaml deepdiff
 ##
 diff-platform-preflight-spec:
-	curl -sL https://platform.steadybit.com/api/spec/platform -o - | yq -p json -o yaml > platform-spec.yaml
+	curl -sL https://platform.dev.steadybit.com/api/spec/platform -o - | yq -p json -o yaml > platform-spec.yaml
 	./filter_spec.sh platform-spec.yaml filtered_platform-spec.yaml
 	./filter_spec.sh ../spec.yml filtered_preflight-kit-spec.yaml
    	# Show unified diff and fail if different

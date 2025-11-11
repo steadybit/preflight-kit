@@ -280,8 +280,9 @@ components:
                       values:
                         - docker-desktop/minikube
               targetExecutions:
-                - type: container
+                - type: com.steadybit.extension_container.container
                   name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+                  state: COMPLETED
                   attributes:
                     - key: container.port
                       value: 51152:2376
@@ -318,6 +319,11 @@ components:
             httpEndpoint:
               value: http://dev.shop.products.internal
               origin: ENVIRONMENT
+        propertiesVersion:
+          type: integer
+          description: Version of the properties for optimistic locking (optional in the Update-API)
+          format: int32
+          example: 1
         properties:
           type: object
           additionalProperties: true
@@ -414,8 +420,9 @@ components:
           type: array
           description: List of targets that are expected to be effected by this action. This list may change in case targets aren't available at the specific time of execution
           example:
-            - type: container
+            - type: com.steadybit.extension_container.container
               name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+              state: COMPLETED
               attributes:
                 - key: container.port
                   value: 51152:2376
@@ -434,6 +441,11 @@ components:
           example: 23
       description: An action-step that is executed as part of an experiment.
       example:
+        stepType: ACTION
+        id: 0199c3f2-48c7-706d-b102-9cb09dd41b5d
+        state: COMPLETED
+        started: "2025-10-08T13:11:01.487541Z"
+        ended: "2025-10-08T13:11:11.490268Z"
         predecessorId: 40b0f797-912d-4256-8887-1553561962a9
         ignoreFailure: false
         parameters:
@@ -453,8 +465,9 @@ components:
                 values:
                   - docker-desktop/minikube
         targetExecutions:
-          - type: container
+          - type: com.steadybit.extension_container.container
             name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
+            state: COMPLETED
             attributes:
               - key: container.port
                 value: 51152:2376
@@ -518,7 +531,11 @@ components:
           example: Container 'xyz' can not be reached
       description: A wait step that is executed as part of an experiment.
       example:
+        stepType: WAIT
         id: 40b0f797-912d-4256-8887-1553561962a9
+        state: COMPLETED
+        started: "2025-06-18T08:32:01.850479Z"
+        ended: "2025-06-18T08:32:11.886043Z"
         predecessorId: null
         ignoreFailure: false
         parameters:
@@ -590,7 +607,7 @@ components:
             $ref: '#/components/schemas/AttributeAO'
       description: A target that is expected to be effected by this action.
       example:
-        type: container
+        type: com.steadybit.extension_container.container
         name: docker://1f769d01b9c5cd29bb302ca40157274f38798104208117b3310825ba676883ea
         state: COMPLETED
         attributes:

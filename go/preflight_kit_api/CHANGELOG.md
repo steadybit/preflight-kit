@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1 (Next release)
+
+- Aligned to the platform OpenApi spec - added propertiesVersion to ExperimentExecutionAO.
+
 ## 1.4.0
 
 - Aligned the spec to the platform OpenApi spec - as a result the constants for "ExperimentExecutionStepWaitAOStepType" and "ExperimentExecutionStepActionAOStepType" has been removed.
