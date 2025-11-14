@@ -126,6 +126,8 @@ components:
           $ref: '#/components/schemas/PreflightKitError'
         modifications:
           $ref: '#/components/schemas/ExecutionModifications'
+        summary:
+          $ref: '#/components/schemas/Summary'
       required:
         - state
     StatusResult:
@@ -139,6 +141,8 @@ components:
           $ref: '#/components/schemas/PreflightKitError'
         modifications:
           $ref: '#/components/schemas/ExecutionModifications'
+        summary:
+          $ref: '#/components/schemas/Summary'
       required:
         - completed
     CancelResult:
@@ -147,6 +151,8 @@ components:
           $ref: '#/components/schemas/PreflightKitError'
         modifications:
           $ref: '#/components/schemas/ExecutionModifications'
+        summary:
+          $ref: '#/components/schemas/Summary'
     ReadHttpMethod:
       type: string
       enum:
@@ -769,6 +775,30 @@ components:
         name: Manuel
         email: aa@bb.com
         pictureUrl: https://.../picture.png
+    Summary:
+      title: Summary
+      description: >-
+        A short summary that will be displayed in the experiment execution details.
+      type: object
+      properties:
+        text:
+          description: >-
+            The text to be displayed in the summary.
+          type: string
+          maxLength: 512
+        level:
+          description: >-
+            The severity level of the summary.
+          type: string
+          enum:
+            - info
+            - warning
+          x-enum-varnames:
+            - SummaryLevelInfo
+            - SummaryLevelWarning
+      required:
+        - text
+        - level
     ExecutionModifications:
       title: ExecutionModifications
       description: >-

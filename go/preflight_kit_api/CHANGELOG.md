@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.4.1 (Next release)
+## 1.4.1
 
 - Aligned to the platform OpenApi spec - added propertiesVersion to ExperimentExecutionAO.
+- Added an option to return a summary from preflight endpoints (requires steadybit platform >= 2.3.26 and agent >= 2.2.3)
 
 ## 1.4.0
 
