@@ -589,6 +589,8 @@ components:
           description: Optional additional reason details on a per target-level why
             the the experiment failed or errored.
           example: 'Could not read state of target container: exit status 1 (time="2023-09-29T12:41:32Z" level=error msg="container does not exist"'
+        summary:
+          $ref: '#/components/schemas/TargetExecutionSummaryAO'
         agentHostname:
           type: string
           description: The agent that processed this target-action command and forwarded
@@ -625,6 +627,17 @@ components:
             value: docker-desktop/minikube
           - key: container.host
             value: docker-desktop
+    TargetExecutionSummaryAO:
+      type: object
+      properties:
+        text:
+          type: string
+        level:
+          type: string
+      description: A summary for a target execution
+      example:
+        text: Hello world!
+        level: INFO
     TargetPredicate:
       type: object
       description: Query defining the overall superset of targets being effected

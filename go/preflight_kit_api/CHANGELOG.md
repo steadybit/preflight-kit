@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2 (next release)
+
+- Aligned to the platform OpenApi spec - added summary to TargetExecutionAO.
+
 ## 1.4.1
 
 - Aligned to the platform OpenApi spec - added propertiesVersion to ExperimentExecutionAO.
