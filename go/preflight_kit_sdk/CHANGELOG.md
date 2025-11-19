@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Update dependencies
+
 ## 2.0.1
 
 - Added missing request to start preflight action method
