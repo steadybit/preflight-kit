@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.4.2 (next release)
+## 1.4.2 
 
 - Aligned to the platform OpenApi spec - added summary to TargetExecutionAO.
+- Update dependencies.
 
 ## 1.4.1
 
