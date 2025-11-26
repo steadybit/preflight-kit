@@ -566,6 +566,11 @@ components:
     TargetExecutionAO:
       type: object
       properties:
+        id:
+          type: string
+          description: Unique identifier of this target execution
+          format: uuid
+          example: 019aba52-558d-7d44-b793-92839f3c3152
         type:
           type: string
           description: Type of the target that is expected to be effected
@@ -613,6 +618,16 @@ components:
               value: docker
           items:
             $ref: '#/components/schemas/AttributeAO'
+        artifacts:
+          type: array
+          description: List of artifact identifiers that are associated with this target execution
+          example:
+              - jmeter-report.zip
+              - system-metrics.csv
+          items:
+            type: string
+            description: List of artifact identifiers that are associated with this target execution
+            example: '["jmeter-report.zip","system-metrics.csv"]'
       description: A target that is expected to be effected by this action.
       example:
         type: com.steadybit.extension_container.container

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3 (next release)
+
+- Aligned to the platform OpenApi spec - added id and artifacts to TargetExecutionAO.
+
 ## 1.4.2 
 
 - Aligned to the platform OpenApi spec - added summary to TargetExecutionAO.
