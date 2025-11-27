@@ -50,17 +50,3 @@ jobs:
         run: |
           go mod download
           make audit
-
-  sonar-scan:
-    name: SonarCloud Scan
-    runs-on: ubuntu-latest
-    if: github.ref_name == 'main'
-    steps:
-      - uses: actions/checkout@v6
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@v6  # NOSONAR githubactions:S7637 - verified action creator
-        with:
-          args: '-X'
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
