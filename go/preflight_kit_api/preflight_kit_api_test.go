@@ -2,11 +2,13 @@ package preflight_kit_api
 
 import (
 	"encoding/json"
-	"github.com/google/uuid"
-	openapi_types "github.com/oapi-codegen/runtime/types"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
+	openapi_types "github.com/oapi-codegen/runtime/types"
+	"github.com/steadybit/extension-kit/extutil"
+	"github.com/stretchr/testify/assert"
 )
 
 // markAsUsed checks that the provided value is not nil.
@@ -52,7 +54,13 @@ func TestPreflightKitObjects(t *testing.T) {
 		maximum := int32(10)
 		percentage := int32(50)
 		targetType := "server"
-		predicate := TargetPredicate{"region": "us-east"}
+		predicate := TargetPredicateAO{}
+		assert.NoError(t, predicate.FromTargetAttributeKeyValuePredicateAO(
+			TargetAttributeKeyValuePredicateAO{
+				Key:      extutil.Ptr("region"),
+				Operator: nil,
+				Values:   extutil.Ptr([]string{"us-west-1"}),
+			}))
 		br := BlastRadiusAO{
 			Maximum:    &maximum,
 			Percentage: &percentage,
