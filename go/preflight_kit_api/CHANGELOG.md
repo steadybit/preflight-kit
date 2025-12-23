@@ -2,7 +2,7 @@
 
 ## 1.4.3 (next release)
 
-- Aligned to the platform OpenApi spec - added id and artifacts to TargetExecutionAO.
+- Aligned to the platform OpenApi spec - added id and artifacts to TargetExecutionAO using TargetPredicateAO instead of TargetPredicate.
 
 ## 1.4.2 
 

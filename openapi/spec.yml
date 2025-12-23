@@ -653,7 +653,125 @@ components:
       example:
         text: Hello world!
         level: INFO
-    TargetPredicate:
+    NegationTargetPredicateAO:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            not:
+              $ref: '#/components/schemas/TargetPredicateAO'
+    QueryLanguagePredicateAO:
+      required:
+        - query
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            query:
+              type: string
+    TargetAgentIdPredicateAO:
+      required:
+        - agentId
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            agentId:
+              type: string
+              format: uuid
+    TargetAttributeKeyCountPredicateAO:
+      required:
+        - key
+        - value
+        - valueCountOperator
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            key:
+              minLength: 1
+              type: string
+            valueCountOperator:
+              minLength: 1
+              type: string
+              enum:
+                - EQUAL
+                - NOT_EQUAL
+                - GREATER_THAN
+                - GREATER_THAN_OR_EQUAL
+                - LESS_THAN
+                - LESS_THAN_OR_EQUAL
+            value:
+              minLength: 1
+              type: string
+    TargetAttributeKeyPredicateAO:
+      required:
+        - key
+        - operator
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            key:
+              minLength: 1
+              type: string
+            operator:
+              minLength: 1
+              type: string
+    TargetAttributeKeyPresencePredicateAO:
+      required:
+        - key
+        - presenceOperator
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            key:
+              minLength: 1
+              type: string
+            presenceOperator:
+              minLength: 1
+              type: string
+              enum:
+                - PRESENT
+                - NOT_PRESENT
+    TargetAttributeKeyValuePredicateAO:
+      required:
+        - key
+        - operator
+        - values
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            key:
+              minLength: 1
+              type: string
+            operator:
+              minLength: 1
+              type: string
+            values:
+              type: array
+              items:
+                type: string
+    TargetNamePredicateAO:
+      required:
+        - name
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            name:
+              type: string
+    TargetPredicateAO:
       type: object
       description: Query defining the overall superset of targets being effected
       example:
@@ -661,6 +779,28 @@ components:
           operator: EQUALS
           values:
             - docker-desktop/minikube
+      oneOf:
+        - $ref: '#/components/schemas/NegationTargetPredicateAO'
+        - $ref: '#/components/schemas/QueryLanguagePredicateAO'
+        - $ref: '#/components/schemas/TargetAgentIdPredicateAO'
+        - $ref: '#/components/schemas/TargetAttributeKeyCountPredicateAO'
+        - $ref: '#/components/schemas/TargetAttributeKeyPredicateAO'
+        - $ref: '#/components/schemas/TargetAttributeKeyPresencePredicateAO'
+        - $ref: '#/components/schemas/TargetAttributeKeyValuePredicateAO'
+        - $ref: '#/components/schemas/TargetNamePredicateAO'
+        - $ref: '#/components/schemas/TargetTypePredicateAO'
+    TargetTypePredicateAO:
+      required:
+        - types
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/TargetPredicateAO'
+        - type: object
+          properties:
+            types:
+              type: array
+              items:
+                type: string
     AbstractExperimentExecutionStepAO:
       required:
         - stepType
@@ -747,7 +887,7 @@ components:
           format: int32
           example: 2
         predicate:
-          $ref: '#/components/schemas/TargetPredicate'
+          $ref: '#/components/schemas/TargetPredicateAO'
       description: Blast radius that is applied to define the set of targets as well
         as an optional random subset
       example:
@@ -767,10 +907,12 @@ components:
       type: object
       properties:
         key:
+          minLength: 1
           type: string
           description: The key of the attribute, may be associated multiple times to the same target
           example: container.engine
         value:
+          minLength: 1
           type: string
           description: The value of the attribute
           example: docker
