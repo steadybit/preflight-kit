@@ -42,8 +42,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/rogpeppe/go-internal v1.12.0 h1:exVL4IDcn6na9z1rAb56Vxr+CgyK3nn3O+epU5NdKM8=
 github.com/rogpeppe/go-internal v1.12.0/go.mod h1:E+RYuTGaKKdloAfM02xzb0FW3Paa99yedzYV+kq4uf4=
 github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad/go.mod h1:qLr4V1qq6nMqFKkMo8ZTx3f+BZEkzsRUY10Xsm2mwU0=
-github.com/steadybit/extension-kit v1.10.1 h1:fvjDuTySNb1pPTWsaIwmosv7YT1m1l/YgB+mIpnOkDE=
-github.com/steadybit/extension-kit v1.10.1/go.mod h1:H0ruxx/Lwg7PQI/oi56aivVlZgeU8cl6ebHhyoq0Fj4=
+github.com/steadybit/extension-kit v1.10.2 h1:ny62/TPgZIhZibY0+L8zuFEKqx3XuCEXZgij0Z2SDyM=
+github.com/steadybit/extension-kit v1.10.2/go.mod h1:vjcSUw8/eR11sQxR7cTEkU2oPoNvoKTihXQIqh3jlHM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
