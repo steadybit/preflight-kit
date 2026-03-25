@@ -864,6 +864,7 @@ components:
         mapping:
           ACTION: '#/components/schemas/ExperimentExecutionStepActionAO'
           WAIT: '#/components/schemas/ExperimentExecutionStepWaitAO'
+          SERVICE-VALIDATION: '#/components/schemas/ExperimentExecutionStepServiceValidationAO'
       oneOf:
         - $ref: '#/components/schemas/ExperimentExecutionStepActionAO'
         - $ref: '#/components/schemas/ExperimentExecutionStepWaitAO'
