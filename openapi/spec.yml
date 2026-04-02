@@ -484,6 +484,37 @@ components:
               - key: container.host
                 value: docker-desktop
         totalTargetCount: 1
+    ExperimentExecutionStepServiceValidationAO:
+      required:
+         - stepType
+      type: object
+      description: A service validation step that is executed as part of an experiment.
+      example:
+        stepType: SERVICE-VALIDATION
+        id: 40b0f797-912d-4256-8887-1553561962a9
+        state: COMPLETED
+        started: "2025-06-18T08:32:01.850479Z"
+        ended: "2025-06-18T08:32:11.886043Z"
+        predecessorId: null
+        ignoreFailure: false
+        parameters:
+          duration: 60s
+        serviceId: cc06f132-0694-4ffa-aee2-13d8fafa3a8b
+        validations: []
+      allOf:
+        - $ref: '#/components/schemas/AbstractExperimentExecutionStepAO'
+        - type: object
+          properties:
+            serviceId:
+              type: string
+              description: Unique identifier of the service.
+              format: uuid
+              example: 40b0f797-912d-4256-8887-1553561962a9
+            validations:
+              type: array
+              description: List of actions performed as part of this service validation step.
+              items:
+                $ref: '#/components/schemas/ExperimentExecutionStepActionAO'
     ExperimentExecutionStepWaitAO:
       required:
         - stepType
@@ -868,6 +899,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/ExperimentExecutionStepActionAO'
         - $ref: '#/components/schemas/ExperimentExecutionStepWaitAO'
+        - $ref: '#/components/schemas/ExperimentExecutionStepServiceValidationAO'
     BlastRadiusAO:
       type: object
       properties:

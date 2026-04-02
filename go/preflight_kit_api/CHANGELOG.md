@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.4.3 (next release)
+## 1.4.3
 
 - Aligned to the platform OpenApi spec - added id and artifacts to TargetExecutionAO using TargetPredicateAO instead of TargetPredicate.
+- Aligned to the platform OpenApi spec - added ExperimentExecutionStepServiceValidationAO.
 
 ## 1.4.2 
 
