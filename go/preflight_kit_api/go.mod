@@ -1,6 +1,6 @@
 module github.com/steadybit/preflight-kit/go/preflight_kit_api
 
-go 1.24.0
+go 1.25.0
 
 toolchain go1.25.4
 
@@ -8,7 +8,7 @@ require (
 	github.com/getkin/kin-openapi v0.135.0
 	github.com/google/uuid v1.6.0
 	github.com/oapi-codegen/runtime v1.4.0
-	github.com/steadybit/extension-kit v1.10.3
+	github.com/steadybit/extension-kit v1.10.4
 	github.com/stretchr/testify v1.11.1
 )
 
