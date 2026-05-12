@@ -5,7 +5,7 @@ go 1.25.0
 toolchain go1.25.4
 
 require (
-	github.com/getkin/kin-openapi v0.137.0
+	github.com/getkin/kin-openapi v0.138.0
 	github.com/google/uuid v1.6.0
 	github.com/oapi-codegen/runtime v1.4.0
 	github.com/steadybit/extension-kit v1.10.4
