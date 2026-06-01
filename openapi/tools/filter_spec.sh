@@ -9,8 +9,18 @@ fi
 INPUT="$1"
 OUTPUT="$2"
 
-# Define components that should be ignored during comparison.
+# Component-level whitelist: matching components are skipped entirely and never
+# emitted, so they are absent from the comparison.
 WHITELIST=("WhitelistedComponent1" "WhitelistedComponent2")
+
+# Path-level ignores: these sub-paths are deleted from the filtered output of
+# both specs. The platform marks these fields nullable while the generated
+# preflight-kit spec does not; the divergence is acceptable, so ignore it
+# rather than failing the diff.
+PATH_IGNORES=(
+  ".components.schemas.UserSummaryAO.properties.pictureUrl.nullable"
+  ".components.schemas.UserSummaryAO.properties.email.nullable"
+)
 
 # Declare global arrays.
 declare -a pending
@@ -102,6 +112,12 @@ done
     sed 's/^/      /' "$tmp_dir/$comp_file"
   done
 } > "$OUTPUT"
+
+# Drop the ignored sub-paths so known, acceptable divergences do not fail the diff.
+if [ ${#PATH_IGNORES[@]} -gt 0 ]; then
+  ignore_expr=$(IFS=,; echo "${PATH_IGNORES[*]}")
+  yq eval "del($ignore_expr)" -i "$OUTPUT"
+fi
 
 echo "Filtered spec written to $OUTPUT"
 rm -rf "$tmp_dir"

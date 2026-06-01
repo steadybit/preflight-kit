@@ -1,7 +1,8 @@
 ##
-## to run this locally you need to have yq and python installed
-## also you need to install the pyyaml and deepdiff python packages:
-##  pip3 install pyyaml deepdiff
+## to run this locally you need to have yq installed
+##
+## known, acceptable divergences from the platform spec are ignored via the
+## WHITELIST and PATH_IGNORES lists in filter_spec.sh
 ##
 diff-platform-preflight-spec:
 	curl -sL https://platform.steadybit.com/api/spec/platform -o - | yq -p json -o yaml > platform-spec.yaml
