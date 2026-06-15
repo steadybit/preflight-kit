@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.4
+
+- Added `tags` to `ExperimentExecutionAO`.
+- Added `SERVICE` value to the `ExperimentExecutionVariableAO` origin enum.
+- `ExperimentExecutionVariableAO.value` is now a string or an array of strings, matching how the platform serializes multi-value (select expression) variables. This changes the generated Go type to a union.
+
 ## 1.4.3
 
 - Aligned to the platform OpenApi spec - added id and artifacts to TargetExecutionAO using TargetPredicateAO instead of TargetPredicate.

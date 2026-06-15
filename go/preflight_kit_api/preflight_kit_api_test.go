@@ -155,7 +155,10 @@ func TestPreflightKitObjects(t *testing.T) {
 	// ExperimentExecutionVariableAO
 	t.Run("ExperimentExecutionVariableAO", func(t *testing.T) {
 		origin := ExperimentExecutionVariableAOOrigin("ENVIRONMENT")
-		value := "variable-value"
+		var value ExperimentExecutionVariableAO_Value
+		if err := value.FromSingleVariableValue("variable-value"); err != nil {
+			t.Fatal(err)
+		}
 		ev := ExperimentExecutionVariableAO{
 			Origin: &origin,
 			Value:  &value,
