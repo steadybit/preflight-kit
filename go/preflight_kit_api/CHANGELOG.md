@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.4
+
+- Aligned to the platform OpenApi spec - added `SERVICE` as a possible `origin` in `ExperimentExecutionVariableAO`.
+- Deprecated `variables` in `ExperimentExecutionAO` - the field will likely change to better represent the new backend variable structure.
+
 ## 1.4.3
 
 - Aligned to the platform OpenApi spec - added id and artifacts to TargetExecutionAO using TargetPredicateAO instead of TargetPredicate.
