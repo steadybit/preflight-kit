@@ -20,6 +20,9 @@ WHITELIST=("WhitelistedComponent1" "WhitelistedComponent2")
 PATH_IGNORES=(
   ".components.schemas.UserSummaryAO.properties.pictureUrl.nullable"
   ".components.schemas.UserSummaryAO.properties.email.nullable"
+  ".components.schemas.ExperimentExecutionAO.properties.variables.deprecated"
+  ".components.schemas.ExperimentExecutionAO.properties.variables.description"
+  ".components.schemas.ExperimentExecutionVariableAO.properties.origin.enum"
 )
 
 # Declare global arrays.
