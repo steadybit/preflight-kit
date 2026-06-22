@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 	"github.com/steadybit/extension-kit/extutil"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,7 +21,7 @@ func TestPreflightKitObjects(t *testing.T) {
 	// AbstractExperimentExecutionStepAO
 	t.Run("AbstractExperimentExecutionStepAO", func(t *testing.T) {
 		now := time.Now()
-		idVal := openapi_types.UUID(uuid.New())
+		idVal := uuid.New()
 		customLabel := "test label"
 		ignoreFailure := true
 		state := "running"
@@ -155,7 +154,8 @@ func TestPreflightKitObjects(t *testing.T) {
 	// ExperimentExecutionVariableAO
 	t.Run("ExperimentExecutionVariableAO", func(t *testing.T) {
 		origin := ExperimentExecutionVariableAOOrigin("ENVIRONMENT")
-		value := "variable-value"
+		value := ExperimentExecutionVariableAO_Value{}
+		_ = value.FromExperimentExecutionVariableAOValue0("variable-value")
 		ev := ExperimentExecutionVariableAO{
 			Origin: &origin,
 			Value:  &value,
