@@ -1,0 +1,34 @@
+name: Check Open API Spec (platform vs preflight-kit / PROD)
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 7 * * 1-5'
+
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '^1.25.4'
+
+      - name: Install dependencies
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+          python3 -m pip install --upgrade pip
+          pip3 install deepdiff pyyaml
+
+      - name: Diff OpenAPI spec with the platform one
+        working-directory: openapi/tools
+        run: make diff-platform-preflight-spec
+        env:
+          PLATFORM_SPEC_URL: https://platform.steadybit.com/api/spec/platform
