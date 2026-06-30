@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.5
+
+- Aligned to the platform OpenApi spec - added `tags` to `ExperimentExecutionAO`.
+
 ## 1.4.4
 
 - Aligned to the platform OpenApi spec - added `SERVICE` as a possible `origin` in `ExperimentExecutionVariableAO`.

@@ -226,6 +226,17 @@ components:
           type: string
           description: The hypothesis that is validated by the experiment
           example: System is able to survive a latency in the network of 1500ms
+        tags:
+          uniqueItems: true
+          type: array
+          description: Tags of the experiment at the time the execution was requested
+          example:
+              - resilience
+              - shop
+          items:
+            type: string
+            description: Tags of the experiment at the time the execution was requested
+            example: '["resilience","shop"]'
         requested:
           type: string
           description: Timestamp when the experiment was requested
@@ -600,11 +611,11 @@ components:
             - EXPERIMENT
             - SCHEDULE
             - EXECUTION
-      description: Variables and their origins that have been used for this execution
+      description: The variables resolved for this specific execution, keyed by name. Each entry carries the resolved value(s) and the tier the winning value originated from (ENVIRONMENT, SERVICE, EXPERIMENT, SCHEDULE, EXECUTION). A single-value variable's value is a string, a multi-value variable's value is an array of strings. Empty until the execution starts, as dynamic values are resolved once at run start and then stay stable for the whole run.
       example:
         httpEndpoint:
-          value: http://dev.shop.products.internal
-          origin: ENVIRONMENT
+          value: http://shop.products.internal
+          origin: EXECUTION
     TargetExecutionAO:
       type: object
       properties:
@@ -983,12 +994,11 @@ components:
           type: string
         email:
           type: string
-      description: The user that connected the hub
+      description: The user that canceled the experiment execution, only present if the execution was canceled
       example:
-        username: ag1hb7ap-d299-47ab-998f-c2a53b433820
-        name: Manuel
-        email: aa@bb.com
-        pictureUrl: https://.../picture.png
+         username: ag1hb7ap-d299-47ab-998f-c2a53b433820
+         name: Max Mustermann
+         email: max@steadybit.com
     Summary:
       title: Summary
       description: >-
