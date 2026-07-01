@@ -210,7 +210,12 @@ func monitorHeartbeatWithCallback(preflightActionExecutionId uuid.UUID, interval
 	extendedInterval := interval + min(interval/100*5, 500*time.Millisecond)
 	ch := make(chan time.Time, 1)
 	monitor := heartbeat.Notify(ch, extendedInterval, timeout)
-	heartbeatMonitors.Store(preflightActionExecutionId, monitor)
+	// Stop and replace any monitor already registered for this execution so a repeated
+	// Start (same execution id) can't leak the previous monitor's goroutines. Stop is
+	// idempotent, so this is safe even if the previous monitor already stopped.
+	if prev, loaded := heartbeatMonitors.Swap(preflightActionExecutionId, monitor); loaded {
+		prev.(*heartbeat.Monitor).Stop()
+	}
 	go func() {
 		for range ch {
 			callback()
