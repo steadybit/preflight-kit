@@ -17,10 +17,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/steadybit/extension-kit/extconversion"
+	"github.com/steadybit/extension-kit/extheartbeat"
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/extension-kit/extsignals"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
-	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/v2/heartbeat"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_sdk/v2/state_persister"
 )
 
@@ -209,12 +209,12 @@ func monitorHeartbeatWithCallback(preflightActionExecutionId uuid.UUID, interval
 	// as we observed heartbeats always narrowly missing the specified interval.
 	extendedInterval := interval + min(interval/100*5, 500*time.Millisecond)
 	ch := make(chan time.Time, 1)
-	monitor := heartbeat.Notify(ch, extendedInterval, timeout)
+	monitor := extheartbeat.Notify(ch, extendedInterval, timeout)
 	// Stop and replace any monitor already registered for this execution so a repeated
 	// Start (same execution id) can't leak the previous monitor's goroutines. Stop is
 	// idempotent, so this is safe even if the previous monitor already stopped.
 	if prev, loaded := heartbeatMonitors.Swap(preflightActionExecutionId, monitor); loaded {
-		prev.(*heartbeat.Monitor).Stop()
+		prev.(*extheartbeat.Monitor).Stop()
 	}
 	go func() {
 		for range ch {
@@ -226,7 +226,7 @@ func monitorHeartbeatWithCallback(preflightActionExecutionId uuid.UUID, interval
 func recordHeartbeat(preflightActionExecutionId uuid.UUID) {
 	monitor, _ := heartbeatMonitors.Load(preflightActionExecutionId)
 	if monitor != nil {
-		monitor.(*heartbeat.Monitor).RecordHeartbeat()
+		monitor.(*extheartbeat.Monitor).RecordHeartbeat()
 	}
 }
 
@@ -235,7 +235,7 @@ func stopMonitorHeartbeat(preflightActionExecutionId uuid.UUID) {
 	// stop handler and the heartbeat-timeout goroutine) only one gets the monitor; Stop is
 	// idempotent regardless.
 	if monitor, ok := heartbeatMonitors.LoadAndDelete(preflightActionExecutionId); ok {
-		monitor.(*heartbeat.Monitor).Stop()
+		monitor.(*extheartbeat.Monitor).Stop()
 	}
 }
 

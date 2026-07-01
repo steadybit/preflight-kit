@@ -4,6 +4,7 @@
 
 - fix: prevent data races and panics in the preflight stop/heartbeat handling — guard the shared `stopEvents` slice with a mutex, make `heartbeat.Monitor.Stop` idempotent, and make `RecordHeartbeat` a non-blocking, closed-safe send, so concurrent stop/status/timeout paths can no longer crash the extension (double-close / send-on-closed-channel / slice race)
 - fix: stop and replace an existing heartbeat monitor when a preflight is started again for the same execution id, instead of leaking the previous monitor's goroutines
+- refactor: use the shared `extheartbeat` watchdog from extension-kit instead of the local `heartbeat` package (removed); requires extension-kit v1.10.7
 
 ## 2.0.2
 
