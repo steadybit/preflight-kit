@@ -28,6 +28,7 @@ var (
 	registeredPreflights = make(map[string]interface{})
 	statePersister       = state_persister.NewInmemoryStatePersister()
 	stopEvents           = make([]stopEvent, 0, 10)
+	stopEventsMu         sync.Mutex
 	heartbeatMonitors    = sync.Map{}
 )
 
@@ -209,7 +210,12 @@ func monitorHeartbeatWithCallback(preflightActionExecutionId uuid.UUID, interval
 	extendedInterval := interval + min(interval/100*5, 500*time.Millisecond)
 	ch := make(chan time.Time, 1)
 	monitor := heartbeat.Notify(ch, extendedInterval, timeout)
-	heartbeatMonitors.Store(preflightActionExecutionId, monitor)
+	// Stop and replace any monitor already registered for this execution so a repeated
+	// Start (same execution id) can't leak the previous monitor's goroutines. Stop is
+	// idempotent, so this is safe even if the previous monitor already stopped.
+	if prev, loaded := heartbeatMonitors.Swap(preflightActionExecutionId, monitor); loaded {
+		prev.(*heartbeat.Monitor).Stop()
+	}
 	go func() {
 		for range ch {
 			callback()
@@ -225,14 +231,17 @@ func recordHeartbeat(preflightActionExecutionId uuid.UUID) {
 }
 
 func stopMonitorHeartbeat(preflightActionExecutionId uuid.UUID) {
-	monitor, _ := heartbeatMonitors.Load(preflightActionExecutionId)
-	if monitor != nil {
+	// LoadAndDelete so that when two paths stop the same execution concurrently (the HTTP
+	// stop handler and the heartbeat-timeout goroutine) only one gets the monitor; Stop is
+	// idempotent regardless.
+	if monitor, ok := heartbeatMonitors.LoadAndDelete(preflightActionExecutionId); ok {
 		monitor.(*heartbeat.Monitor).Stop()
-		heartbeatMonitors.Delete(preflightActionExecutionId)
 	}
 }
 
 func markAsStopped(preflightActionExecutionId uuid.UUID, reason string) {
+	stopEventsMu.Lock()
+	defer stopEventsMu.Unlock()
 	if len(stopEvents) > 100 {
 		stopEvents = stopEvents[1:]
 	}
@@ -244,6 +253,8 @@ func markAsStopped(preflightActionExecutionId uuid.UUID, reason string) {
 }
 
 func getStopEvent(preflightActionExecutionId uuid.UUID) *stopEvent {
+	stopEventsMu.Lock()
+	defer stopEventsMu.Unlock()
 	for _, event := range stopEvents {
 		if event.preflightActionExecutionId == preflightActionExecutionId {
 			return &event
