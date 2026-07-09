@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/steadybit/extension-kit/extutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +29,7 @@ func TestPreflightKitObjects(t *testing.T) {
 			Ended:         &now,
 			Id:            &idVal,
 			IgnoreFailure: &ignoreFailure,
-			Parameters:    &map[string]interface{}{"key": "value"},
+			Parameters:    &map[string]any{"key": "value"},
 			PredecessorId: &idVal,
 			Reason:        &customLabel,
 			Started:       &now,
@@ -56,9 +55,9 @@ func TestPreflightKitObjects(t *testing.T) {
 		predicate := TargetPredicateAO{}
 		assert.NoError(t, predicate.FromTargetAttributeKeyValuePredicateAO(
 			TargetAttributeKeyValuePredicateAO{
-				Key:      extutil.Ptr("region"),
+				Key:      new("region"),
 				Operator: nil,
-				Values:   extutil.Ptr([]string{"us-west-1"}),
+				Values:   new([]string{"us-west-1"}),
 			}))
 		br := BlastRadiusAO{
 			Maximum:    &maximum,
