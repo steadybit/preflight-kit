@@ -176,11 +176,13 @@ func RegisterPreflight[T any](a Preflight[T]) {
 	adapter := newPreflightHttpAdapter(a)
 	registeredPreflights[adapter.description.Id] = a
 	adapter.registerHandlers()
+	exthttp.BumpRevision()
 }
 
 // ClearRegisteredPreflights clears all registered preflights - used for testing. Warning: This will not remove the registered routes from the http server.
 func ClearRegisteredPreflights() {
 	registeredPreflights = make(map[string]any)
+	exthttp.BumpRevision()
 }
 
 // GetPreflightList returns a list of all root endpoints of registered preflights.
