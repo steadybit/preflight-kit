@@ -77,7 +77,7 @@ func (a *preflightHttpAdapter[T]) handleStart(w http.ResponseWriter, r *http.Req
 		var extensionError *extension_kit.ExtensionError
 		isExtensionError := errors.As(err, &extensionError)
 		if !isExtensionError {
-			extensionError = extutil.Ptr(extension_kit.ToError("Failed to start preflight.", err))
+			extensionError = new(extension_kit.ToError("Failed to start preflight.", err))
 		}
 		result.Error = &preflight_kit_api.PreflightKitError{
 			Title:    extensionError.Title,
@@ -168,7 +168,7 @@ func (a *preflightHttpAdapter[T]) handleStatus(w http.ResponseWriter, r *http.Re
 		var extensionError *extension_kit.ExtensionError
 		isExtensionError := errors.As(err, &extensionError)
 		if !isExtensionError {
-			extensionError = extutil.Ptr(extension_kit.ToError("Failed to read preflight status.", err))
+			extensionError = new(extension_kit.ToError("Failed to read preflight status.", err))
 		}
 		result.Error = &preflight_kit_api.PreflightKitError{
 			Title:    extensionError.Title,
@@ -297,7 +297,7 @@ func getDescriptionWithDefaults[T any](preflight Preflight[T]) preflight_kit_api
 		description.Status.Method = preflight_kit_api.POST
 	}
 	if description.Status.CallInterval == nil || *description.Status.CallInterval == "" {
-		description.Status.CallInterval = extutil.Ptr(defaultCallInterval)
+		description.Status.CallInterval = new(defaultCallInterval)
 	}
 	return description
 }

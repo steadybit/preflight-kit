@@ -7,13 +7,12 @@ import (
 	"context"
 
 	"github.com/steadybit/extension-kit/extconversion"
-	"github.com/steadybit/extension-kit/extutil"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
 )
 
 type Call struct {
 	Name string
-	Args []interface{}
+	Args []any
 }
 
 type ExamplePreflight struct {
@@ -54,20 +53,20 @@ func (preflight *ExamplePreflight) Describe() preflight_kit_api.PreflightDescrip
 		Start:                   preflight_kit_api.MutatingEndpointReference{},
 		TargetAttributeIncludes: []string{"target.attribute.to.include", "target.attribute.to.include.2"},
 		Status: preflight_kit_api.MutatingEndpointReferenceWithCallInterval{
-			CallInterval: extutil.Ptr("1s"),
+			CallInterval: new("1s"),
 		},
 		Cancel: &preflight_kit_api.MutatingEndpointReference{},
 	}
 }
 
 func (preflight *ExamplePreflight) Start(_ context.Context, state *ExampleState, _ preflight_kit_api.StartPreflightRequestBody) (*preflight_kit_api.StartResult, error) {
-	preflight.calls <- Call{"Start", []interface{}{state}}
+	preflight.calls <- Call{"Start", []any{state}}
 	state.TestStep = "Prepare"
 	return &preflight_kit_api.StartResult{}, nil
 }
 
 func (preflight *ExamplePreflight) Status(_ context.Context, state *ExampleState) (*preflight_kit_api.StatusResult, error) {
-	preflight.calls <- Call{"Status", []interface{}{state}}
+	preflight.calls <- Call{"Status", []any{state}}
 	if preflight.statusError != nil {
 		return nil, preflight.statusError
 	}
@@ -76,6 +75,6 @@ func (preflight *ExamplePreflight) Status(_ context.Context, state *ExampleState
 }
 
 func (preflight *ExamplePreflight) Cancel(_ context.Context, state *ExampleState) (*preflight_kit_api.CancelResult, error) {
-	preflight.calls <- Call{"Cancel", []interface{}{state}}
+	preflight.calls <- Call{"Cancel", []any{state}}
 	return &preflight_kit_api.CancelResult{}, nil
 }

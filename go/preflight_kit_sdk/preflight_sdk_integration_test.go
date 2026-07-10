@@ -15,7 +15,6 @@ import (
 	"github.com/steadybit/extension-kit/exthttp"
 	"github.com/steadybit/extension-kit/extlogging"
 	"github.com/steadybit/extension-kit/extsignals"
-	"github.com/steadybit/extension-kit/extutil"
 	"github.com/steadybit/preflight-kit/go/preflight_kit_api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -129,15 +128,15 @@ func testcaseHeartbeatTimeout(t *testing.T, op PreflightOperations) {
 func testCaseStatusWithGenericError(t *testing.T, op PreflightOperations) {
 	op.preflight.statusError = fmt.Errorf("this is a test error")
 	statusResult, err := op.statusResult(t, preflight_kit_api.PreflightState{})
-	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "Failed to read preflight status.", Detail: extutil.Ptr("this is a test error")}, statusResult.Error)
+	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "Failed to read preflight status.", Detail: new("this is a test error")}, statusResult.Error)
 	assert.Nil(t, err)
 	op.assertCall(t, "Status", ANY_ARG)
 }
 
 func testCaseStatusWithExtensionKitError(t *testing.T, op PreflightOperations) {
-	op.preflight.statusError = extutil.Ptr(extension_kit.ToError("this is a test error", errors.New("with some details")))
+	op.preflight.statusError = new(extension_kit.ToError("this is a test error", errors.New("with some details")))
 	statusResult, err := op.statusResult(t, preflight_kit_api.PreflightState{})
-	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "this is a test error", Detail: extutil.Ptr("with some details")}, statusResult.Error)
+	assert.Equal(t, &preflight_kit_api.PreflightKitError{Title: "this is a test error", Detail: new("with some details")}, statusResult.Error)
 	assert.Nil(t, err)
 	op.assertCall(t, "Status", ANY_ARG)
 }
@@ -260,7 +259,7 @@ func (op *PreflightOperations) resetCalls() {
 	}
 }
 
-func (op *PreflightOperations) assertCall(t *testing.T, name string, args ...interface{}) {
+func (op *PreflightOperations) assertCall(t *testing.T, name string, args ...any) {
 	select {
 	case call := <-op.calls:
 		assert.Equal(t, name, call.Name)

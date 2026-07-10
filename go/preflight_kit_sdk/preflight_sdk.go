@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	registeredPreflights = make(map[string]interface{})
+	registeredPreflights = make(map[string]any)
 	statePersister       = state_persister.NewInmemoryStatePersister()
 	stopEvents           = make([]stopEvent, 0, 10)
 	stopEventsMu         sync.Mutex
@@ -180,7 +180,7 @@ func RegisterPreflight[T any](a Preflight[T]) {
 
 // ClearRegisteredPreflights clears all registered preflights - used for testing. Warning: This will not remove the registered routes from the http server.
 func ClearRegisteredPreflights() {
-	registeredPreflights = make(map[string]interface{})
+	registeredPreflights = make(map[string]any)
 }
 
 // GetPreflightList returns a list of all root endpoints of registered preflights.
