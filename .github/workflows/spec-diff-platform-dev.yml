@@ -22,10 +22,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
           python3 -m pip install --upgrade pip
-          pip3 install deepdiff pyyaml
+          pip3 install --only-binary :all: deepdiff==9.1.0 pyyaml==6.0.3
 
       - name: Diff OpenAPI spec with the platform one
         working-directory: openapi/tools
