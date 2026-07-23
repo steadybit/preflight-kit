@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade pip==25.2
           pip3 install --only-binary :all: deepdiff==9.1.0 pyyaml==6.0.3
 
       - name: Diff OpenAPI spec with the platform one
