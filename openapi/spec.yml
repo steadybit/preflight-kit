@@ -270,6 +270,7 @@ components:
             - CLI
             - UI
             - SCHEDULE
+            - MCP
         steps:
           type: array
           description: The steps that are executed in parallel or sequence in the

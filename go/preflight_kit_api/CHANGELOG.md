@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.6
+
+- Aligned to the platform OpenApi spec - added `MCP` to `ExperimentExecutionAOCreatedVia` enum.
+
 ## 1.4.5
 
 - Aligned to the platform OpenApi spec - added `tags` to `ExperimentExecutionAO`.
