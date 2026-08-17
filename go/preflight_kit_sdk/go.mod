@@ -1,24 +1,24 @@
 module github.com/steadybit/preflight-kit/go/preflight_kit_sdk/v2
 
-go 1.26.5
+go 1.26
 
 require (
 	github.com/google/uuid v1.6.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/rs/zerolog v1.35.1
-	github.com/steadybit/extension-kit v1.11.1
-	github.com/steadybit/preflight-kit/go/preflight_kit_api v1.4.6
+	github.com/steadybit/extension-kit v1.11.2
+	github.com/steadybit/preflight-kit/go/preflight_kit_api v1.4.7
 	github.com/stretchr/testify v1.11.1
 )
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/getkin/kin-openapi v0.145.0 // indirect
+	github.com/getkin/kin-openapi v0.146.0 // indirect
 	github.com/go-openapi/jsonpointer v0.22.5 // indirect
 	github.com/go-openapi/swag/jsonname v0.25.5 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
-	github.com/klauspost/compress v1.19.1 // indirect
+	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/oapi-codegen/runtime v1.6.0 // indirect
