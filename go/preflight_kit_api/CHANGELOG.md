@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.4.7
+## 1.4.8
 
 - Aligned to the platform OpenApi spec - added `SUITE` to `ExperimentExecutionAOCreatedVia` enum.
+
+## 1.4.7
+
+- Update dependencies
 
 ## 1.4.6
 
