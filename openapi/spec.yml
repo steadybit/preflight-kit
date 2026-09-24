@@ -270,6 +270,7 @@ components:
             - CLI
             - UI
             - SCHEDULE
+            - SUITE
             - MCP
         steps:
           type: array
